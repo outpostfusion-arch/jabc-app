@@ -1,12 +1,5 @@
 {
   "buildCommand": "pnpm prisma generate && pnpm build",
   "installCommand": "pnpm install",
-  "framework": "nextjs",
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "DIRECT_URL": "@direct_url",
-    "AUTH_SECRET": "@auth_secret",
-    "NEXTAUTH_URL": "@nextauth_url",
-    "UPLOAD_DIR": "/tmp/uploads"
-  }
+  "framework": "nextjs"
 }
