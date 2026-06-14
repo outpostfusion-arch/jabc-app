@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma"
 import { createReadStream, statSync } from "fs"
 import path from "path"
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
-  const video = await prisma.video.findUnique({ where: { id: params.id } })
+  const { id } = await params
+  const video = await prisma.video.findUnique({ where: { id } })
   if (!video) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
   const filePath = video.filePath.startsWith("/")
@@ -60,14 +61,15 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   })
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session || session.user.role !== "TEACHER") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
+  const { id } = await params
   const { title, description, sortOrder } = await req.json()
   const video = await prisma.video.update({
-    where: { id: params.id },
+    where: { id },
     data: { title, description, sortOrder },
   })
   return NextResponse.json(video)
