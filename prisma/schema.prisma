@@ -1,0 +1,306 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── USERS ──────────────────────────────────────────────────────────────────
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  passwordHash String
+  displayName  String
+  role         Role     @default(STUDENT)
+  classCode    String?
+  avatarEmoji  String   @default("🧑")
+  points       Int      @default(0)
+  createdBy    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessionProgress   SessionProgress[]
+  bmc               BusinessModelCanvas?
+  targetMarket      TargetMarketProfile?
+  quizResults       PromotionQuizResult[]
+  teamMemberships   TeamMember[]
+  teamMessages      TeamMessage[]
+  financialRecords  FinancialRecord[]
+  pricingCalcs      PricingCalculation[]
+  logo              Logo?
+  brandProfile      BrandProfile?
+  videoReflections  VideoReflection[]
+  uploadedVideos    Video[]
+  userBadges        UserBadge[]
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+// ─── SESSIONS ────────────────────────────────────────────────────────────────
+
+model ClassSession {
+  id             Int    @id
+  title          String
+  description    String
+  bcCurriculumTag String
+  isLocked       Boolean @default(false)
+  sortOrder      Int     @default(0)
+
+  progress SessionProgress[]
+}
+
+model SessionProgress {
+  id           String         @id @default(cuid())
+  userId       String
+  sessionId    Int
+  status       ProgressStatus @default(NOT_STARTED)
+  startedAt    DateTime?
+  completedAt  DateTime?
+  pointsEarned Int            @default(0)
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session ClassSession @relation(fields: [sessionId], references: [id])
+
+  @@unique([userId, sessionId])
+}
+
+enum ProgressStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+}
+
+// ─── BUSINESS MODEL CANVAS ───────────────────────────────────────────────────
+
+model BusinessModelCanvas {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  keyPartners       Json     @default("[]")
+  keyActivities     Json     @default("[]")
+  keyResources      Json     @default("[]")
+  valueProposition  Json     @default("[]")
+  customerRelations Json     @default("[]")
+  channels          Json     @default("[]")
+  customerSegments  Json     @default("[]")
+  costStructure     Json     @default("[]")
+  revenueStreams     Json     @default("[]")
+  businessName      String   @default("")
+  tagline           String   @default("")
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── SESSION 2: TARGET MARKET & PROMOTIONS ───────────────────────────────────
+
+model TargetMarketProfile {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  ageRange      String   @default("")
+  interests     Json     @default("[]")
+  location      String   @default("")
+  problemSolved String   @default("")
+  customNotes   String   @default("")
+  spending      String   @default("")
+  shopWhere     String   @default("")
+  influencedBy  String   @default("")
+  motivation    String   @default("")
+  lifestyle     String   @default("")
+  reachHow      String   @default("")
+  updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PromotionQuizResult {
+  id          String   @id @default(cuid())
+  userId      String
+  answers     Json
+  score       Int
+  completedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── SESSION 3: TEAM WORKSPACE ───────────────────────────────────────────────
+
+model Team {
+  id        String @id @default(cuid())
+  name      String
+  classCode String
+  createdAt DateTime @default(now())
+
+  members      TeamMember[]
+  messages     TeamMessage[]
+  marketingDoc MarketingDoc?
+}
+
+model TeamMember {
+  id     String @id @default(cuid())
+  teamId String
+  userId String
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+}
+
+model MarketingDoc {
+  id        String   @id @default(cuid())
+  teamId    String   @unique
+  slogan    String   @default("")
+  keyMessages Json   @default("[]")
+  toneOfVoice String @default("")
+  version   Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+model TeamMessage {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── SESSION 4: VIDEOS ───────────────────────────────────────────────────────
+
+model Video {
+  id          String   @id @default(cuid())
+  uploadedBy  String
+  title       String
+  description String   @default("")
+  filePath    String
+  mimeType    String
+  sizeBytes   Int
+  sessionId   Int
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  uploader    User          @relation(fields: [uploadedBy], references: [id])
+  prompts     VideoPrompt[]
+  reflections VideoReflection[]
+}
+
+model VideoPrompt {
+  id               String @id @default(cuid())
+  videoId          String
+  timestampSeconds Int
+  promptText       String
+  sortOrder        Int    @default(0)
+
+  video       Video             @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  reflections VideoReflection[]
+}
+
+model VideoReflection {
+  id          String   @id @default(cuid())
+  userId      String
+  videoId     String
+  promptId    String
+  answer      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video  Video       @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  prompt VideoPrompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, promptId])
+}
+
+// ─── SESSION 5: FINANCIALS ───────────────────────────────────────────────────
+
+model FinancialRecord {
+  id          String          @id @default(cuid())
+  userId      String
+  type        TransactionType
+  category    String
+  description String
+  amount      Float
+  date        DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+}
+
+model PricingCalculation {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  productName     String   @default("")
+  materialCost    Float    @default(0)
+  labourCost      Float    @default(0)
+  overheadCost    Float    @default(0)
+  profitMarginPct Float    @default(20)
+  suggestedPrice  Float    @default(0)
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── SESSION 6: BRAND & LOGO ─────────────────────────────────────────────────
+
+model Logo {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  fabricJson Json     @default("{}")
+  pngDataUrl String?
+  updatedAt  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BrandProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  brandName    String   @default("")
+  tagline      String   @default("")
+  colorPalette Json     @default("[]")
+  adjectives   Json     @default("[]")
+  salesPitch   String   @default("")
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── GAMIFICATION ────────────────────────────────────────────────────────────
+
+model Badge {
+  id          String @id @default(cuid())
+  slug        String @unique
+  name        String
+  description String
+  emoji       String
+  pointValue  Int    @default(10)
+
+  userBadges UserBadge[]
+}
+
+model UserBadge {
+  id       String   @id @default(cuid())
+  userId   String
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+}
