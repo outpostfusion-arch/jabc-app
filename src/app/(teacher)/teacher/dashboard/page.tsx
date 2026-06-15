@@ -9,6 +9,15 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string; s
   COMPLETED:    { bg: "#D1FAE5", text: "#065F46", label: "✓", shadow: "0 2px 6px rgba(34,197,94,0.3)" },
 }
 
+const SESSION_META: Record<number, { icon: string; label?: string }> = {
+  1: { icon: "💼" },
+  2: { icon: "🎯" },
+  3: { icon: "🤝" },
+  4: { icon: "⚙️" },
+  5: { icon: "💰" },
+  6: { icon: "🚀", label: "Product Launch" },
+}
+
 const NAV_CARDS = [
   { href: "#progress",          emoji: "👥", label: "Students",   gradient: "linear-gradient(135deg, #6366F1, #818CF8)", shadow: "rgba(99,102,241,0.35)" },
   { href: "/teacher/teams",     emoji: "🤝", label: "Teams",      gradient: "linear-gradient(135deg, #3B82F6, #60A5FA)", shadow: "rgba(59,130,246,0.35)" },
@@ -120,11 +129,20 @@ export default async function TeacherDashboardPage() {
               <tr style={{ background: "#F8FAFC", borderBottom: "2px solid #EEF2FF" }}>
                 <th className="text-left px-5 py-3 font-bold" style={{ color: "#64748B" }}>Student</th>
                 <th className="text-center px-3 py-3 font-bold" style={{ color: "#64748B" }}>Pts</th>
-                {sessions.map((s) => (
-                  <th key={s.id} className="text-center px-3 py-3 font-bold whitespace-nowrap" style={{ color: "#64748B" }}>
-                    S{s.id}
-                  </th>
-                ))}
+                {sessions.map((s) => {
+                  const meta = SESSION_META[s.id] ?? { icon: "📋" }
+                  return (
+                    <th key={s.id} className="text-center px-4 py-3 font-bold" style={{ color: "#64748B", minWidth: "80px" }}>
+                      <div className="flex flex-col items-center gap-0.5">
+                        <span className="text-base">{meta.icon}</span>
+                        <span className="text-xs font-black">S{s.id}</span>
+                        {meta.label && (
+                          <span className="text-xs font-semibold whitespace-nowrap" style={{ color: "#6366F1" }}>{meta.label}</span>
+                        )}
+                      </div>
+                    </th>
+                  )
+                })}
                 <th className="text-center px-4 py-3 font-bold" style={{ color: "#64748B" }}>View</th>
               </tr>
             </thead>
