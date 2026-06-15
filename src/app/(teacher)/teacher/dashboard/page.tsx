@@ -134,7 +134,7 @@ export default async function TeacherDashboardPage() {
                     <th key={s.id} className="text-center px-4 py-3 font-bold" style={{ color: "#64748B", minWidth: "80px" }}>
                       <div className="flex flex-col items-center gap-0.5">
                         <span className="text-base">{meta.icon}</span>
-                        <span className="text-xs font-black">S{s.id}</span>
+                        <span className="text-sm font-black">S{s.id}</span>
                         {meta.label && (
                           <span className="text-xs font-semibold whitespace-nowrap" style={{ color: "#6366F1" }}>{meta.label}</span>
                         )}
