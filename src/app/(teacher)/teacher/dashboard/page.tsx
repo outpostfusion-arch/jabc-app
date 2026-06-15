@@ -87,7 +87,7 @@ export default async function TeacherDashboardPage() {
               background: card.gradient,
               boxShadow: `0 10px 24px -4px ${card.shadow}`,
               minHeight: "140px",
-              border: "1px solid rgba(255,255,255,0.18)",
+              border: "2px solid #1E293B",
             }}
           >
             <div className="absolute -right-4 -bottom-4 text-8xl opacity-20 select-none">{card.emoji}</div>
@@ -104,7 +104,7 @@ export default async function TeacherDashboardPage() {
         style={{
           background: "white",
           boxShadow: "0 8px 24px -4px rgba(0,0,0,0.08), 0 4px 8px -2px rgba(0,0,0,0.04)",
-          border: "1px solid #E2E8F0",
+          border: "2px solid #1E293B",
         }}
       >
         {/* Table header bar */}
@@ -187,7 +187,7 @@ export default async function TeacherDashboardPage() {
                         <td key={s.id} className="text-center px-3 py-3">
                           <span
                             className="inline-flex items-center justify-center w-8 h-8 rounded-full text-sm font-bold"
-                            style={{ background: cfg.bg, color: cfg.text, boxShadow: cfg.shadow }}
+                            style={{ background: cfg.bg, color: cfg.text, boxShadow: cfg.shadow, border: "2px solid #1E293B" }}
                             title={status}
                           >
                             {cfg.label}
