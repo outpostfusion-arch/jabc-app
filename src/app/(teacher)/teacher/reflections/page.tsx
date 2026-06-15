@@ -74,12 +74,14 @@ export default function TeacherReflectionsPage() {
     fetch("/api/reflections")
       .then((r) => r.json())
       .then((data: Student[]) => {
+        if (!Array.isArray(data)) { setLoading(false); return }
         setStudents(data)
         const initFeedback: Record<string, string> = {}
         data.forEach((s) => { initFeedback[s.id] = s.reflection?.teacherFeedback ?? "" })
         setFeedbackText(initFeedback)
         setLoading(false)
       })
+      .catch(() => setLoading(false))
   }, [])
 
   async function toggleFeatured(student: Student) {
