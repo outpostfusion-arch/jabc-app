@@ -56,8 +56,6 @@ export default async function TeacherDashboardPage() {
           boxShadow: "0 16px 32px -8px rgba(15,23,42,0.35)",
         }}
       >
-        <div className="absolute -right-8 -top-8 w-48 h-48 rounded-full" style={{ background: "rgba(255,255,255,0.04)" }} />
-        <div className="absolute right-24 bottom-0 w-32 h-32 rounded-full" style={{ background: "rgba(99,102,241,0.12)" }} />
         <div className="flex items-start justify-between relative">
           <div>
             <h1 className="text-3xl font-black text-white">Class Dashboard 📊</h1>
