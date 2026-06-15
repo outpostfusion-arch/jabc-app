@@ -6,7 +6,7 @@ import TeacherHeaderControls from "@/components/shared/TeacherHeaderControls"
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string; shadow: string }> = {
   NOT_STARTED: { bg: "#F1F5F9", text: "#94A3B8", label: "⏳", shadow: "none" },
   IN_PROGRESS:  { bg: "#FEF3C7", text: "#D97706", label: "▶", shadow: "0 2px 6px rgba(251,191,36,0.3)" },
-  COMPLETED:    { bg: "#D1FAE5", text: "#065F46", label: "✓", shadow: "0 2px 6px rgba(34,197,94,0.3)" },
+  COMPLETED:    { bg: "#D1FAE5", text: "#065F46", label: "✅", shadow: "0 2px 6px rgba(34,197,94,0.3)" },
 }
 
 const SESSION_META: Record<number, { icon: string; label?: string }> = {
