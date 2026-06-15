@@ -11,6 +11,7 @@ export async function GET() {
       where: { userId: session.user.id },
       select: {
         whatLearned: true,
+        marketInsight: true,
         proudOf: true,
         challenges: true,
         nextSteps: true,

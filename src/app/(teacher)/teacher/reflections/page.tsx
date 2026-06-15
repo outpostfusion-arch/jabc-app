@@ -7,6 +7,7 @@ import AvatarImage from "@/components/shared/AvatarImage"
 interface Reflection {
   id: string
   whatLearned: string
+  marketInsight: string
   proudOf: string
   challenges: string
   nextSteps: string
@@ -45,7 +46,7 @@ const GOAL_STATUS_CONFIG: Record<string, { label: string; bg: string; color: str
 }
 
 function hasContent(r: Reflection | null) {
-  return !!(r && (r.whatLearned || r.proudOf || r.challenges || r.nextSteps))
+  return !!(r && (r.whatLearned || r.marketInsight || r.proudOf || r.challenges || r.nextSteps))
 }
 
 function SkillPips({ value, color }: { value: number; color: string }) {
@@ -112,7 +113,7 @@ export default function TeacherReflectionsPage() {
   }
 
   function exportCSV() {
-    const headers = ["Name", "Username", "Submitted", "Mood", "Teamwork", "Creativity", "Business", "Leadership", "Goal Status", "What Learned", "Proud Of", "Challenges", "Next Steps", "Media URL"]
+    const headers = ["Name", "Username", "Submitted", "Mood", "Teamwork", "Creativity", "Business", "Leadership", "Goal Status", "Business Idea", "Target Customer", "Team Achievement", "Biggest Challenge", "Would Change", "Media URL"]
     const rows = students.map((s) => [
       s.displayName, s.username,
       hasContent(s.reflection) ? "Yes" : "No",
@@ -123,6 +124,7 @@ export default function TeacherReflectionsPage() {
       s.reflection?.skillLeadership ?? 0,
       s.reflection?.goalStatus ?? "not_started",
       s.reflection?.whatLearned ?? "",
+      s.reflection?.marketInsight ?? "",
       s.reflection?.proudOf ?? "",
       s.reflection?.challenges ?? "",
       s.reflection?.nextSteps ?? "",
@@ -264,13 +266,19 @@ export default function TeacherReflectionsPage() {
                 <div className="px-5 py-4 space-y-3" style={{ borderBottom: "1px solid #F1F5F9" }}>
                   {r.whatLearned && (
                     <div>
-                      <div className="text-xs font-black mb-0.5" style={{ color: "#6366F1" }}>What they learned</div>
+                      <div className="text-xs font-black mb-0.5" style={{ color: "#6366F1" }}>Business idea</div>
                       <div className="text-sm leading-relaxed" style={{ color: "#334155" }}>{r.whatLearned}</div>
+                    </div>
+                  )}
+                  {r.marketInsight && (
+                    <div>
+                      <div className="text-xs font-black mb-0.5" style={{ color: "#A855F7" }}>Target customer</div>
+                      <div className="text-sm leading-relaxed" style={{ color: "#334155" }}>{r.marketInsight}</div>
                     </div>
                   )}
                   {r.proudOf && (
                     <div>
-                      <div className="text-xs font-black mb-0.5" style={{ color: "#22C55E" }}>Most proud of</div>
+                      <div className="text-xs font-black mb-0.5" style={{ color: "#22C55E" }}>Team achievement</div>
                       <div className="text-sm leading-relaxed" style={{ color: "#334155" }}>{r.proudOf}</div>
                     </div>
                   )}
@@ -282,7 +290,7 @@ export default function TeacherReflectionsPage() {
                   )}
                   {r.nextSteps && (
                     <div>
-                      <div className="text-xs font-black mb-0.5" style={{ color: "#EC4899" }}>Would do differently</div>
+                      <div className="text-xs font-black mb-0.5" style={{ color: "#EC4899" }}>Would change / improve</div>
                       <div className="text-sm leading-relaxed" style={{ color: "#334155" }}>{r.nextSteps}</div>
                     </div>
                   )}

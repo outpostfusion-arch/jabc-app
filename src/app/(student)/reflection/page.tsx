@@ -6,10 +6,11 @@ import Link from "next/link"
 interface Brand { brandName: string; tagline: string }
 
 const QUESTIONS = [
-  { key: "whatLearned",  label: "What did you learn from this program?",     placeholder: "Share your key takeaways from JABC..." },
-  { key: "proudOf",      label: "What are you most proud of?",               placeholder: "What did you accomplish that you're really proud of?" },
-  { key: "challenges",   label: "What was your biggest challenge?",           placeholder: "What was hard? How did you handle it?" },
-  { key: "nextSteps",    label: "What would you do differently next time?",   placeholder: "Looking back, what would you change or try?" },
+  { key: "whatLearned",   label: "1. What was your business idea?",                           placeholder: "Describe your product or service and the problem it solves..." },
+  { key: "marketInsight", label: "2. Who is your target customer?",                           placeholder: "How did you identify them? How did you plan to reach them?" },
+  { key: "proudOf",       label: "3. What was your team's greatest achievement?",             placeholder: "Describe a key win and what your specific role was in making it happen..." },
+  { key: "challenges",    label: "4. What was your hardest challenge?",                       placeholder: "What made it difficult and how did you and your team work through it?" },
+  { key: "nextSteps",     label: "5. If you were launching for real, what would you change?", placeholder: "Think about your product, marketing strategy, pricing, or brand..." },
 ] as const
 
 type QuestionKey = typeof QUESTIONS[number]["key"]
@@ -39,7 +40,7 @@ const GOAL_STATUSES = [
 
 export default function ReflectionPage() {
   const [answers, setAnswers] = useState<Record<QuestionKey, string>>({
-    whatLearned: "", proudOf: "", challenges: "", nextSteps: "",
+    whatLearned: "", marketInsight: "", proudOf: "", challenges: "", nextSteps: "",
   })
   const [mediaUrl, setMediaUrl] = useState("")
   const [mediaType, setMediaType] = useState("")
@@ -63,6 +64,7 @@ export default function ReflectionPage() {
         if (r) {
           setAnswers({
             whatLearned: r.whatLearned ?? "",
+            marketInsight: r.marketInsight ?? "",
             proudOf: r.proudOf ?? "",
             challenges: r.challenges ?? "",
             nextSteps: r.nextSteps ?? "",

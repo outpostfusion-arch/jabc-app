@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 const REFLECTION_SELECT = {
   id: true,
   whatLearned: true,
+  marketInsight: true,
   proudOf: true,
   challenges: true,
   nextSteps: true,
@@ -48,12 +49,13 @@ export async function PUT(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const {
-    whatLearned, proudOf, challenges, nextSteps, mediaUrl, mediaType,
+    whatLearned, marketInsight, proudOf, challenges, nextSteps, mediaUrl, mediaType,
     moodEmoji, skillTeamwork, skillCreativity, skillBusiness, skillLeadership, goalStatus,
   } = await req.json()
 
   const data = {
     whatLearned: whatLearned ?? "",
+    marketInsight: marketInsight ?? "",
     proudOf: proudOf ?? "",
     challenges: challenges ?? "",
     nextSteps: nextSteps ?? "",
@@ -74,7 +76,7 @@ export async function PUT(req: NextRequest) {
   })
 
   // Auto-award reflection badge when all 4 core fields are filled
-  const isComplete = !!(whatLearned?.trim() && proudOf?.trim() && challenges?.trim() && nextSteps?.trim())
+  const isComplete = !!(whatLearned?.trim() && marketInsight?.trim() && proudOf?.trim() && challenges?.trim() && nextSteps?.trim())
   if (isComplete) {
     const badge = await prisma.badge.findUnique({ where: { slug: "reflection-complete" } })
     if (badge) {
