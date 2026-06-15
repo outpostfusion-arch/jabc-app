@@ -4,7 +4,7 @@ import AvatarImage from "@/components/shared/AvatarImage"
 import TeacherHeaderControls from "@/components/shared/TeacherHeaderControls"
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string; shadow: string }> = {
-  NOT_STARTED: { bg: "#F1F5F9", text: "#94A3B8", label: "—", shadow: "none" },
+  NOT_STARTED: { bg: "#F1F5F9", text: "#94A3B8", label: "⏳", shadow: "none" },
   IN_PROGRESS:  { bg: "#FEF3C7", text: "#D97706", label: "▶", shadow: "0 2px 6px rgba(251,191,36,0.3)" },
   COMPLETED:    { bg: "#D1FAE5", text: "#065F46", label: "✓", shadow: "0 2px 6px rgba(34,197,94,0.3)" },
 }
@@ -21,7 +21,7 @@ const SESSION_META: Record<number, { icon: string; label?: string }> = {
 const NAV_CARDS = [
   { href: "#progress",          emoji: "👥", label: "Students",   gradient: "linear-gradient(135deg, #6366F1, #818CF8)", shadow: "rgba(99,102,241,0.35)" },
   { href: "/teacher/teams",     emoji: "🤝", label: "Teams",      gradient: "linear-gradient(135deg, #3B82F6, #60A5FA)", shadow: "rgba(59,130,246,0.35)" },
-  { href: "/teacher/videos",    emoji: "🎬", label: "Videos",     gradient: "linear-gradient(135deg, #EC4899, #F472B6)", shadow: "rgba(236,72,153,0.35)" },
+  { href: "/teacher/reflections", emoji: "📝", label: "Student Reflections", gradient: "linear-gradient(135deg, #EC4899, #F472B6)", shadow: "rgba(236,72,153,0.35)" },
   { href: "/teacher/sessions",  emoji: "📅", label: "Sessions",   gradient: "linear-gradient(135deg, #10B981, #34D399)", shadow: "rgba(16,185,129,0.35)" },
 ]
 

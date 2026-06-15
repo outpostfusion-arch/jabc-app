@@ -39,6 +39,13 @@ export default function StudentNav({ displayName, avatarEmoji, points }: Props) 
           >
             My Progress
           </Link>
+          <Link
+            href="/reflection"
+            className="px-3 py-2 rounded-xl text-sm font-bold transition-colors"
+            style={{ color: pathname === "/reflection" ? "#6366F1" : "#64748B", background: pathname === "/reflection" ? "#EEF2FF" : "transparent" }}
+          >
+            My Reflection
+          </Link>
         </div>
 
         {/* User info */}
