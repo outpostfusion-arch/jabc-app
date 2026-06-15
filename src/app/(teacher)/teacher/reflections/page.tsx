@@ -21,7 +21,16 @@ export default async function TeacherReflectionsPage() {
       displayName: true,
       username: true,
       avatarEmoji: true,
-      reflection: true,
+      reflection: {
+        select: {
+          whatLearned: true,
+          proudOf: true,
+          challenges: true,
+          nextSteps: true,
+          mediaUrl: true,
+          mediaType: true,
+        },
+      },
       brandProfile: { select: { brandName: true, tagline: true } },
     },
   })
