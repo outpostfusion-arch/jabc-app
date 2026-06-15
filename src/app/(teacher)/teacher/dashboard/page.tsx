@@ -182,7 +182,7 @@ export default async function TeacherDashboardPage() {
                       </div>
                     </td>
                     {sessions.map((s) => {
-                      const status = s.id === 1 ? "COMPLETED" : (progressMap[s.id] ?? "NOT_STARTED")
+                      const status = progressMap[s.id] ?? "NOT_STARTED"
                       const cfg = STATUS_CONFIG[status]
                       return (
                         <td key={s.id} className="text-center px-3 py-3">
