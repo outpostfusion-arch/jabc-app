@@ -44,7 +44,7 @@ export default function NavCards() {
         <Link
           key={card.label}
           href={card.href}
-          className="rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between transition-all hover:scale-105 hover:opacity-90"
+          className="rounded-3xl p-6 relative overflow-hidden flex flex-col justify-between transition-all hover:scale-105 hover:opacity-90 active:scale-95 active:opacity-80"
           style={{
             background: card.gradient,
             boxShadow: `0 10px 24px -4px ${card.shadow}`,
