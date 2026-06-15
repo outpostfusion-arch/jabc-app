@@ -127,7 +127,7 @@ export default async function TeacherDashboardPage() {
             <thead>
               <tr style={{ background: "#F8FAFC", borderBottom: "2px solid #EEF2FF" }}>
                 <th className="text-left px-5 py-3 font-bold" style={{ color: "#64748B" }}>Student</th>
-                <th className="text-center px-3 py-3 font-bold" style={{ color: "#64748B" }}>Pts</th>
+                <th className="text-center px-3 py-3 font-bold" style={{ color: "#64748B" }}>Badges</th>
                 {sessions.map((s) => {
                   const meta = SESSION_META[s.id] ?? { icon: "📋" }
                   return (
@@ -175,7 +175,7 @@ export default async function TeacherDashboardPage() {
                         className="text-xs font-bold px-2.5 py-1 rounded-full"
                         style={{ background: "#FEF9C3", color: "#A16207", boxShadow: "0 2px 6px rgba(251,191,36,0.25)" }}
                       >
-                        ⭐ {student.points}
+                        🏅 {student.userBadges.length}
                       </span>
                     </td>
                     {sessions.map((s) => {
