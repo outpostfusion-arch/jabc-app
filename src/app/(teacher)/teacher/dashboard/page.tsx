@@ -171,12 +171,15 @@ export default async function TeacherDashboardPage() {
                       </div>
                     </td>
                     <td className="text-center px-3 py-3">
-                      <span
-                        className="text-xs font-bold px-2.5 py-1 rounded-full"
-                        style={{ background: "#FEF9C3", color: "#A16207", boxShadow: "0 2px 6px rgba(251,191,36,0.25)" }}
-                      >
-                        🏅 {student.userBadges.length}
-                      </span>
+                      <div className="flex flex-wrap justify-center gap-0.5 max-w-[80px] mx-auto">
+                        {student.userBadges.length === 0 ? (
+                          <span className="text-xs" style={{ color: "#CBD5E1" }}>—</span>
+                        ) : (
+                          student.userBadges.map((ub) => (
+                            <span key={ub.badge.id} title={ub.badge.name} className="text-base leading-none">{ub.badge.emoji}</span>
+                          ))
+                        )}
+                      </div>
                     </td>
                     {sessions.map((s) => {
                       const status = s.id === 1 ? "COMPLETED" : (progressMap[s.id] ?? "NOT_STARTED")
