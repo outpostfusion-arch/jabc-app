@@ -28,6 +28,16 @@ export default async function TeacherDashboardPage() {
       include: {
         sessionProgress: true,
         userBadges: { include: { badge: true } },
+        reflection: {
+          select: {
+            whatLearned: true,
+            marketInsight: true,
+            proudOf: true,
+            challenges: true,
+            nextSteps: true,
+            moodEmoji: true,
+          },
+        },
       },
     }),
     prisma.classSession.findMany({ orderBy: { sortOrder: "asc" } }),
@@ -198,6 +208,105 @@ export default async function TeacherDashboardPage() {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Student Reflections */}
+      <div className="mt-8">
+        <div
+          className="rounded-3xl overflow-hidden"
+          style={{
+            background: "white",
+            boxShadow: "0 8px 24px -4px rgba(0,0,0,0.08)",
+            border: "2px solid #1E293B",
+          }}
+        >
+          <div
+            className="px-6 py-4 flex items-center justify-between"
+            style={{ background: "linear-gradient(135deg, #6366F1, #8B5CF6)" }}
+          >
+            <span className="font-black text-lg text-white">Student Reflections 📝</span>
+            <Link
+              href="/teacher/reflections"
+              className="px-4 py-1.5 rounded-xl text-sm font-bold transition-all hover:opacity-90"
+              style={{ background: "rgba(255,255,255,0.2)", color: "white" }}
+            >
+              View All →
+            </Link>
+          </div>
+
+          <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {students.map((student) => {
+              const r = student.reflection
+              const hasAny = r && (r.whatLearned || r.marketInsight || r.proudOf || r.challenges || r.nextSteps)
+
+              return (
+                <div
+                  key={student.id}
+                  className="rounded-2xl overflow-hidden"
+                  style={{ border: "1.5px solid #E2E8F0", background: "#FAFBFF" }}
+                >
+                  {/* Student name row */}
+                  <div
+                    className="px-4 py-3 flex items-center gap-3"
+                    style={{ borderBottom: "1.5px solid #E2E8F0", background: "white" }}
+                  >
+                    <AvatarImage avatarId={student.avatarEmoji ?? "fox"} size={32} />
+                    <span className="font-black text-sm" style={{ color: "#1E293B" }}>{student.displayName}</span>
+                    {r?.moodEmoji && <span className="text-lg">{r.moodEmoji}</span>}
+                    <span
+                      className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full"
+                      style={hasAny
+                        ? { background: "#D1FAE5", color: "#065F46" }
+                        : { background: "#F1F5F9", color: "#94A3B8" }}
+                    >
+                      {hasAny ? "✓ Submitted" : "Not yet"}
+                    </span>
+                  </div>
+
+                  {hasAny && r ? (
+                    <div className="px-4 py-3 space-y-2.5">
+                      {r.whatLearned && (
+                        <div>
+                          <div className="text-xs font-black mb-0.5" style={{ color: "#6366F1" }}>Business idea</div>
+                          <div className="text-xs leading-relaxed" style={{ color: "#475569" }}>{r.whatLearned}</div>
+                        </div>
+                      )}
+                      {r.marketInsight && (
+                        <div>
+                          <div className="text-xs font-black mb-0.5" style={{ color: "#A855F7" }}>Target customer</div>
+                          <div className="text-xs leading-relaxed" style={{ color: "#475569" }}>{r.marketInsight}</div>
+                        </div>
+                      )}
+                      {r.proudOf && (
+                        <div>
+                          <div className="text-xs font-black mb-0.5" style={{ color: "#22C55E" }}>Team achievement</div>
+                          <div className="text-xs leading-relaxed" style={{ color: "#475569" }}>{r.proudOf}</div>
+                        </div>
+                      )}
+                      {r.challenges && (
+                        <div>
+                          <div className="text-xs font-black mb-0.5" style={{ color: "#F59E0B" }}>Biggest challenge</div>
+                          <div className="text-xs leading-relaxed" style={{ color: "#475569" }}>{r.challenges}</div>
+                        </div>
+                      )}
+                      {r.nextSteps && (
+                        <div>
+                          <div className="text-xs font-black mb-0.5" style={{ color: "#EC4899" }}>Would change / improve</div>
+                          <div className="text-xs leading-relaxed" style={{ color: "#475569" }}>{r.nextSteps}</div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="px-4 py-6 text-center">
+                      <div className="text-2xl mb-1">📝</div>
+                      <div className="text-xs font-medium" style={{ color: "#94A3B8" }}>No reflection submitted yet</div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     </div>
