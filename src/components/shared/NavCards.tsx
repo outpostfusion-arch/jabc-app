@@ -78,8 +78,10 @@ export default function NavCards() {
               </div>
 
               {/* Back */}
-              <div
-                className="absolute inset-0 rounded-3xl p-5 flex flex-col justify-between"
+              <Link
+                href={card.href}
+                onClick={(e) => e.stopPropagation()}
+                className="absolute inset-0 rounded-3xl p-5 flex flex-col justify-center gap-2"
                 style={{
                   backfaceVisibility: "hidden",
                   WebkitBackfaceVisibility: "hidden",
@@ -90,19 +92,9 @@ export default function NavCards() {
                   minHeight: "140px",
                 }}
               >
-                <div>
-                  <div className="text-sm font-black mb-2" style={{ color: "#1E293B" }}>{card.label}</div>
-                  <p className="text-xs leading-relaxed" style={{ color: "#64748B" }}>{card.summary}</p>
-                </div>
-                <Link
-                  href={card.href}
-                  onClick={(e) => e.stopPropagation()}
-                  className="block text-xs font-black px-3 py-2 rounded-xl text-center text-white transition-all hover:opacity-90"
-                  style={{ background: card.gradient }}
-                >
-                  Go →
-                </Link>
-              </div>
+                <div className="text-base font-black" style={{ color: "#1E293B" }}>{card.label}</div>
+                <p className="text-sm font-bold leading-relaxed" style={{ color: "#64748B" }}>{card.summary}</p>
+              </Link>
             </div>
           </div>
         )
