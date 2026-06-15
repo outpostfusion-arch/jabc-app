@@ -2,9 +2,10 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import AvatarImage from "@/components/shared/AvatarImage"
 import TeacherHeaderControls from "@/components/shared/TeacherHeaderControls"
+import NavCards from "@/components/shared/NavCards"
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; label: string; shadow: string }> = {
-  NOT_STARTED: { bg: "#E2E8F0", text: "#94A3B8", label: "○",  shadow: "none" },
+  NOT_STARTED: { bg: "#E2E8F0", text: "#94A3B8", label: "–",  shadow: "none" },
   IN_PROGRESS:  { bg: "#F59E0B", text: "#ffffff", label: "▶",  shadow: "0 2px 8px rgba(245,158,11,0.45)" },
   COMPLETED:    { bg: "#22C55E", text: "#ffffff", label: "✓",  shadow: "0 2px 8px rgba(34,197,94,0.45)" },
 }
@@ -18,12 +19,6 @@ const SESSION_META: Record<number, { icon: string; label?: string }> = {
   6: { icon: "🚀", label: "Product Launch" },
 }
 
-const NAV_CARDS = [
-  { href: "#progress",          emoji: "👥", label: "Students",   gradient: "linear-gradient(135deg, #6366F1, #818CF8)", shadow: "rgba(99,102,241,0.35)" },
-  { href: "/teacher/teams",     emoji: "🤝", label: "Teams",      gradient: "linear-gradient(135deg, #3B82F6, #60A5FA)", shadow: "rgba(59,130,246,0.35)" },
-  { href: "/teacher/reflections", emoji: "📝", label: "Student Reflections", gradient: "linear-gradient(135deg, #EC4899, #F472B6)", shadow: "rgba(236,72,153,0.35)" },
-  { href: "/teacher/sessions",  emoji: "📅", label: "Sessions",   gradient: "linear-gradient(135deg, #10B981, #34D399)", shadow: "rgba(16,185,129,0.35)" },
-]
 
 export default async function TeacherDashboardPage() {
   const [students, sessions, teams] = await Promise.all([
@@ -75,25 +70,7 @@ export default async function TeacherDashboardPage() {
       </div>
 
       {/* Nav cards */}
-      <div className="grid grid-cols-4 gap-4 mb-8">
-        {NAV_CARDS.map((card) => (
-          <Link
-            key={card.href}
-            href={card.href}
-            className="rounded-3xl p-8 relative overflow-hidden transition-all hover:scale-105 hover:opacity-90 flex flex-col justify-between"
-            style={{
-              background: card.gradient,
-              boxShadow: `0 10px 24px -4px ${card.shadow}`,
-              minHeight: "140px",
-              border: "2px solid #1E293B",
-            }}
-          >
-            <div className="absolute -right-4 -bottom-4 text-8xl opacity-20 select-none">{card.emoji}</div>
-            <div className="text-3xl relative">{card.emoji}</div>
-            <div className="text-base font-black mt-4 relative text-white">{card.label}</div>
-          </Link>
-        ))}
-      </div>
+      <NavCards />
 
       {/* Progress Grid */}
       <div
