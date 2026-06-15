@@ -51,10 +51,10 @@ export default async function DashboardPage() {
         <div className="absolute -right-10 -top-10 w-48 h-48 rounded-full" style={{ background: "rgba(255,255,255,0.08)" }} />
         <div className="absolute right-20 bottom-0 w-32 h-32 rounded-full" style={{ background: "rgba(255,255,255,0.06)" }} />
 
-        <h1 className="text-3xl font-black text-white relative">
+        <h1 className="text-2xl sm:text-3xl font-black text-white relative">
           Hey {user?.displayName?.split(" ")[0] ?? "there"}! 👋
         </h1>
-        <p className="mt-1 text-lg font-semibold relative" style={{ color: "rgba(255,255,255,0.8)" }}>
+        <p className="mt-1 text-base sm:text-lg font-semibold relative" style={{ color: "rgba(255,255,255,0.8)" }}>
           Ready to build your business? Pick up where you left off.
         </p>
 

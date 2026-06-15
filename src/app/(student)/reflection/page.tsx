@@ -143,7 +143,7 @@ export default function ReflectionPage() {
         {/* Mood picker */}
         <div className="bg-white rounded-3xl p-6" style={{ boxShadow: "0 4px 16px -4px rgba(0,0,0,0.08)", border: "2px solid #F1F5F9" }}>
           <div className="text-sm font-black mb-4" style={{ color: "#1E293B" }}>How are you feeling about your project?</div>
-          <div className="flex gap-3 justify-between">
+          <div className="grid grid-cols-5 gap-2">
             {MOODS.map((m) => (
               <button
                 key={m.emoji}

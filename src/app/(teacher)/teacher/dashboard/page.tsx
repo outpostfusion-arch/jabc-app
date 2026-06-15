@@ -61,18 +61,18 @@ export default async function TeacherDashboardPage() {
           boxShadow: "0 16px 32px -8px rgba(15,23,42,0.35)",
         }}
       >
-        <div className="flex items-start justify-between relative">
-          <div>
-            <h1 className="text-3xl font-black text-white">Class Dashboard 📊</h1>
+        <div className="flex items-start justify-between relative gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl sm:text-3xl font-black text-white">Class Dashboard 📊</h1>
             <p className="mt-1 font-semibold" style={{ color: "rgba(255,255,255,0.6)" }}>
               {students.length} students · {inProgress} actively working
             </p>
-          </div>
-          <div className="absolute left-1/2 top-0 -translate-x-1/2 flex items-center gap-3">
-            <span className="text-5xl">🚀</span>
-            <div className="flex flex-col">
-              <span className="text-5xl font-black text-white leading-none">JABC</span>
-              <span className="text-base font-semibold" style={{ color: "rgba(255,255,255,0.6)" }}>Entrepreneurship program</span>
+            <div className="hidden md:flex items-center gap-3 mt-3">
+              <span className="text-4xl">🚀</span>
+              <div className="flex flex-col">
+                <span className="text-4xl font-black text-white leading-none">JABC</span>
+                <span className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.6)" }}>Entrepreneurship program</span>
+              </div>
             </div>
           </div>
           <TeacherHeaderControls />
@@ -235,7 +235,7 @@ export default async function TeacherDashboardPage() {
             </Link>
           </div>
 
-          <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
             {students.map((student) => {
               const r = student.reflection
               const hasAny = r && (r.whatLearned || r.marketInsight || r.proudOf || r.challenges || r.nextSteps)

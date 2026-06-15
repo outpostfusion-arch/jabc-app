@@ -7,7 +7,7 @@ export default async function TeacherLayout({ children }: { children: React.Reac
   if (!session || session.user.role !== "TEACHER") redirect("/login")
 
   return (
-    <div className="min-h-screen p-6" style={{ background: "#F8FAFC" }}>
+    <div className="min-h-screen px-4 py-4 sm:px-6 sm:py-6" style={{ background: "#F8FAFC" }}>
       <BackButton />
       {children}
     </div>

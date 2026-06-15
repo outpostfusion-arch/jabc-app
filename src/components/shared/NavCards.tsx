@@ -39,7 +39,7 @@ const NAV_CARDS = [
 
 export default function NavCards() {
   return (
-    <div className="grid grid-cols-4 gap-4 mb-8">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
       {NAV_CARDS.map((card) => (
         <Link
           key={card.label}
