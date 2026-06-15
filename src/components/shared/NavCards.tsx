@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 const NAV_CARDS = [
   {
@@ -40,6 +40,14 @@ const NAV_CARDS = [
 
 export default function NavCards() {
   const [flipped, setFlipped] = useState<string | null>(null)
+  const router = useRouter()
+
+  function handleClick(card: typeof NAV_CARDS[number]) {
+    setFlipped(card.label)
+    setTimeout(() => {
+      router.push(card.href)
+    }, 500)
+  }
 
   return (
     <div className="grid grid-cols-4 gap-4 mb-8">
@@ -50,7 +58,7 @@ export default function NavCards() {
             key={card.label}
             className="relative cursor-pointer"
             style={{ minHeight: "140px", perspective: "1000px" }}
-            onClick={() => setFlipped(isFlipped ? null : card.label)}
+            onClick={() => handleClick(card)}
           >
             <div
               className="relative w-full transition-transform duration-500"
@@ -78,9 +86,7 @@ export default function NavCards() {
               </div>
 
               {/* Back */}
-              <Link
-                href={card.href}
-                onClick={(e) => e.stopPropagation()}
+              <div
                 className="absolute inset-0 rounded-3xl p-5 flex flex-col justify-center gap-2"
                 style={{
                   backfaceVisibility: "hidden",
@@ -94,7 +100,7 @@ export default function NavCards() {
               >
                 <div className="text-base font-black" style={{ color: "#1E293B" }}>{card.label}</div>
                 <p className="text-sm font-bold leading-relaxed" style={{ color: "#64748B" }}>{card.summary}</p>
-              </Link>
+              </div>
             </div>
           </div>
         )
