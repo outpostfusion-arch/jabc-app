@@ -8,10 +8,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Forbidden" }, { status: 403 })
   }
   const { id } = await params
-  const { isLocked } = await req.json()
+  const { isLocked, teacherNote, dueDate, sortOrder } = await req.json()
+
+  const data: Record<string, unknown> = {}
+  if (isLocked !== undefined) data.isLocked = isLocked
+  if (teacherNote !== undefined) data.teacherNote = teacherNote
+  if (dueDate !== undefined) data.dueDate = dueDate ? new Date(dueDate) : null
+  if (sortOrder !== undefined) data.sortOrder = sortOrder
+
   const updated = await prisma.classSession.update({
     where: { id: parseInt(id) },
-    data: { isLocked },
+    data,
   })
   return NextResponse.json(updated)
 }

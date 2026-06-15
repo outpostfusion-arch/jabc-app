@@ -46,12 +46,14 @@ enum Role {
 // ─── SESSIONS ────────────────────────────────────────────────────────────────
 
 model ClassSession {
-  id             Int    @id
-  title          String
-  description    String
+  id              Int       @id
+  title           String
+  description     String
   bcCurriculumTag String
-  isLocked       Boolean @default(false)
-  sortOrder      Int     @default(0)
+  isLocked        Boolean   @default(false)
+  sortOrder       Int       @default(0)
+  teacherNote     String    @default("")
+  dueDate         DateTime?
 
   progress SessionProgress[]
 }
