@@ -25,7 +25,7 @@ export default function SessionsPage() {
     setSessions(sessions.map((s) => s.id === id ? { ...s, isLocked: updated.isLocked } : s))
   }
 
-  const SESSION_EMOJIS = ["", "&#x1F3E2;", "&#x1F3AF;", "&#x1F91D;", "&#x2699;&#xFE0F;", "&#x1F4B0;", "&#x1F3A8;"]
+  const SESSION_EMOJIS = ["", "🏢", "🎯", "🤝", "⚙️", "💰", "🎨"]
   const SESSION_COLORS = ["", "#6366F1", "#F43F5E", "#22C55E", "#A855F7", "#FBBF24", "#EC4899"]
 
   if (loading) return <div className="text-center py-20 font-bold" style={{ color: "#94A3B8" }}>Loading...</div>

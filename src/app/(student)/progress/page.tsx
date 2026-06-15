@@ -2,7 +2,7 @@
 import { prisma } from "@/lib/prisma"
 
 const SESSION_LABELS = ["", "What Is a Business?", "Target Markets & Promotions", "Team Marketing", "Product Tutorials", "Financial Basics", "Brand & Final Pitch"]
-const SESSION_EMOJIS = ["", "&#x1F3E2;", "&#x1F3AF;", "&#x1F91D;", "&#x2699;&#xFE0F;", "&#x1F4B0;", "&#x1F3A8;"]
+const SESSION_EMOJIS = ["", "🏢", "🎯", "🤝", "⚙️", "💰", "🎨"]
 const BADGE_COLORS: Record<string, string> = {
   "business-architect": "#6366F1",
   "market-explorer": "#F43F5E",
