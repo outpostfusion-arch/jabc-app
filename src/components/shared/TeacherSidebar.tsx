@@ -10,6 +10,7 @@ const navItems = [
   { href: "/teacher/teams", label: "Teams", icon: "🤝" },
   { href: "/teacher/videos", label: "Videos", icon: "🎬" },
   { href: "/teacher/sessions", label: "Sessions", icon: "📅" },
+  { href: "/teacher/reflections", label: "Reflections", icon: "📝" },
 ]
 
 export default function TeacherSidebar() {
