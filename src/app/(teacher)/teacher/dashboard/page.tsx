@@ -171,7 +171,7 @@ export default async function TeacherDashboardPage() {
                       </div>
                     </td>
                     <td className="text-center px-3 py-3">
-                      <div className="flex flex-wrap justify-center gap-0.5 max-w-[80px] mx-auto">
+                      <div className="flex justify-center gap-0.5 whitespace-nowrap">
                         {student.userBadges.length === 0 ? (
                           <span className="text-xs" style={{ color: "#CBD5E1" }}>—</span>
                         ) : (

@@ -12,23 +12,18 @@ async function main() {
   ])
 
   for (const student of students) {
-    // Pick 3–6 random badges per student
+    // Clear existing badges and points
+    await prisma.userBadge.deleteMany({ where: { userId: student.id } })
+    await prisma.user.update({ where: { id: student.id }, data: { points: 0 } })
+
+    // Pick 1–4 random badges per student
     const shuffled = [...badges].sort(() => Math.random() - 0.5)
-    const count = 3 + Math.floor(Math.random() * 4)
+    const count = 1 + Math.floor(Math.random() * 4)
     const picked = shuffled.slice(0, count)
 
     for (const badge of picked) {
-      try {
-        await prisma.userBadge.create({
-          data: { userId: student.id, badgeId: badge.id },
-        })
-        await prisma.user.update({
-          where: { id: student.id },
-          data: { points: { increment: badge.pointValue } },
-        })
-      } catch {
-        // already has badge, skip
-      }
+      await prisma.userBadge.create({ data: { userId: student.id, badgeId: badge.id } })
+      await prisma.user.update({ where: { id: student.id }, data: { points: { increment: badge.pointValue } } })
     }
 
     console.log(`${student.displayName}: ${picked.map((b) => b.emoji).join(" ")}`)
