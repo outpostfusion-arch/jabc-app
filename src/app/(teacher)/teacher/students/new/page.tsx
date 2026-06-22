@@ -19,12 +19,14 @@ export default function NewStudentPage() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [classCode, setClassCode] = useState("")
+  const [classGroupId, setClassGroupId] = useState("")
   const [avatarEmoji, setAvatarEmoji] = useState("fox")
   const [singleLoading, setSingleLoading] = useState(false)
   const [singleError, setSingleError] = useState("")
 
   // Bulk mode
   const [bulkText, setBulkText] = useState("")
+  const [bulkClassGroupId, setBulkClassGroupId] = useState("")
   const [bulkPreview, setBulkPreview] = useState<BulkStudent[]>([])
   const [bulkLoading, setBulkLoading] = useState(false)
   const [bulkDone, setBulkDone] = useState(false)
@@ -55,7 +57,7 @@ export default function NewStudentPage() {
     const res = await fetch("/api/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ displayName, username, password, classCode, avatarEmoji }),
+      body: JSON.stringify({ displayName, username, password, classCode, classGroupId: classGroupId || undefined, avatarEmoji }),
     })
     setSingleLoading(false)
     if (!res.ok) {
@@ -71,7 +73,7 @@ export default function NewStudentPage() {
     const res = await fetch("/api/students", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ bulk: bulkPreview, classCode }),
+      body: JSON.stringify({ bulk: bulkPreview, classCode, classGroupId: bulkClassGroupId || undefined }),
     })
     setBulkLoading(false)
     if (res.ok) {
@@ -125,6 +127,27 @@ export default function NewStudentPage() {
           </Field>
           <Field label="Class Code (optional)" value={classCode} onChange={setClassCode} placeholder="e.g. CLASS2024" />
 
+          {/* Level picker */}
+          <div>
+            <label className="block text-sm font-bold mb-2" style={{ color: "#64748B" }}>Level</label>
+            <div className="flex gap-3">
+              {[{ id: "", label: "Unassigned" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setClassGroupId(opt.id)}
+                  className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                  style={{
+                    background: classGroupId === opt.id ? "#6366F1" : "#F1F5F9",
+                    color: classGroupId === opt.id ? "white" : "#64748B",
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Avatar picker */}
           <div>
             <label className="block text-sm font-bold mb-2" style={{ color: "#64748B" }}>Avatar</label>
@@ -173,6 +196,28 @@ export default function NewStudentPage() {
               placeholder={"Emma Johnson\nLiam Chen\nSophia Martinez\n..."}
             />
             <Field label="Class Code (optional)" value={classCode} onChange={setClassCode} placeholder="e.g. CLASS2024" />
+
+            {/* Bulk level picker */}
+            <div className="mt-4">
+              <label className="block text-sm font-bold mb-2" style={{ color: "#64748B" }}>Level</label>
+              <div className="flex gap-3">
+                {[{ id: "", label: "Unassigned" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
+                  <button
+                    key={opt.id}
+                    type="button"
+                    onClick={() => setBulkClassGroupId(opt.id)}
+                    className="px-4 py-2 rounded-xl text-sm font-bold transition-all"
+                    style={{
+                      background: bulkClassGroupId === opt.id ? "#6366F1" : "#F1F5F9",
+                      color: bulkClassGroupId === opt.id ? "white" : "#64748B",
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               onClick={parseBulk}
               className="mt-4 px-5 py-2.5 rounded-2xl text-white font-bold text-sm"

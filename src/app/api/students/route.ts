@@ -10,11 +10,13 @@ const SingleSchema = z.object({
   password: z.string().min(4).max(100),
   classCode: z.string().optional(),
   avatarEmoji: z.string().optional(),
+  classGroupId: z.string().optional(),
 })
 
 const BulkSchema = z.object({
   bulk: z.array(z.object({ name: z.string(), username: z.string(), password: z.string() })),
   classCode: z.string().optional(),
+  classGroupId: z.string().optional(),
 })
 
 export async function GET() {
@@ -57,6 +59,7 @@ export async function POST(req: NextRequest) {
             displayName: s.name,
             role: "STUDENT",
             classCode: parsed.data.classCode,
+            classGroupId: parsed.data.classGroupId,
             createdBy: session.user.id,
           },
         })
@@ -84,6 +87,7 @@ export async function POST(req: NextRequest) {
       displayName: parsed.data.displayName,
       role: "STUDENT",
       classCode: parsed.data.classCode,
+      classGroupId: parsed.data.classGroupId,
       avatarEmoji: parsed.data.avatarEmoji ?? "🧑",
       createdBy: session.user.id,
     },

@@ -9,6 +9,20 @@ datasource db {
 
 // ─── USERS ──────────────────────────────────────────────────────────────────
 
+enum Level {
+  JUNIOR
+  SENIOR
+}
+
+model ClassGroup {
+  id        String   @id @default(cuid())
+  name      String
+  level     Level
+  createdAt DateTime @default(now())
+
+  students User[]
+}
+
 model User {
   id           String   @id @default(cuid())
   username     String   @unique
@@ -16,11 +30,14 @@ model User {
   displayName  String
   role         Role     @default(STUDENT)
   classCode    String?
+  classGroupId String?
   avatarEmoji  String   @default("🧑")
   points       Int      @default(0)
   createdBy    String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  classGroup ClassGroup? @relation(fields: [classGroupId], references: [id])
 
   sessionProgress   SessionProgress[]
   bmc               BusinessModelCanvas?

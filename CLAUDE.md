@@ -50,11 +50,25 @@ Each session lives at `/session/[id]/<slug>`. The `id` is the `ClassSession.id` 
 
 Sessions can be locked/unlocked by teachers. Progress is tracked per-student per-session (`NOT_STARTED` / `IN_PROGRESS` / `COMPLETED`).
 
+### Student Reflections
+
+A separate, program-wide reflection (not tied to a single session) that students fill out and teachers review.
+
+| Route | Who | Purpose |
+|---|---|---|
+| `/reflection` | Student | Answer 5 questions + mood emoji + skill self-ratings + goal check-in |
+| `/reflection-gallery` | Student | View reflections the teacher has featured (read-only) |
+| `/teacher/reflections` | Teacher | Review all reflections, leave feedback, feature for gallery, export CSV |
+
+The 5 questions map to `StudentReflection` fields: business idea (`whatLearned`), target customer (`marketInsight`), team achievement (`proudOf`), biggest challenge (`challenges`), what they'd change (`nextSteps`). Also on the model: `moodEmoji`, four 0–5 skill ratings (`skillTeamwork`/`skillCreativity`/`skillBusiness`/`skillLeadership`), `goalStatus` (`not_started`/`in_progress`/`achieved`), `teacherFeedback` (teacher-only write, student-visible read), `isFeatured` (gallery visibility, teacher-controlled).
+
+API (`src/app/api/reflections/`): `PUT /` upserts the student's own answers and auto-awards the `reflection-complete` badge once all 5 text fields are filled; `GET /me` returns the current student's reflection; `GET /` (teacher-only) returns all students; `PUT /[id]` (teacher-only) sets `teacherFeedback`/`isFeatured` for a given student; `GET /gallery` returns only featured reflections.
+
 ### Database
 
 Prisma 7 with PostgreSQL (Supabase). Generated client outputs to `src/generated/prisma`. Connection uses two URLs: `DATABASE_URL` (pooled, runtime) and `DIRECT_URL` (direct, migrations).
 
-Key models: `User`, `ClassSession`, `SessionProgress`, `BusinessModelCanvas`, `TargetMarketProfile`, `Team`, `TeamMember`, `TeamMessage`, `Video`, `VideoPrompt`, `VideoReflection`, `FinancialRecord`, `PricingCalculation`, `Logo`, `BrandProfile`, `Badge`, `UserBadge`.
+Key models: `User`, `ClassSession`, `SessionProgress`, `BusinessModelCanvas`, `TargetMarketProfile`, `Team`, `TeamMember`, `TeamMessage`, `Video`, `VideoPrompt`, `VideoReflection`, `FinancialRecord`, `PricingCalculation`, `Logo`, `BrandProfile`, `Badge`, `UserBadge`, `StudentReflection`.
 
 ### Key Shared Components
 
