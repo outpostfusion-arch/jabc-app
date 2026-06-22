@@ -254,24 +254,6 @@ export default async function TeacherDashboardPage({
         </div>
       </div>
 
-      <ReflectionsPanel
-        levelLabel={levelLabel}
-        students={students.map((s) => ({
-          id: s.id,
-          displayName: s.displayName ?? "",
-          avatarEmoji: s.avatarEmoji ?? "fox",
-          reflection: s.reflection
-            ? {
-                whatLearned: s.reflection.whatLearned ?? "",
-                marketInsight: s.reflection.marketInsight ?? "",
-                proudOf: s.reflection.proudOf ?? "",
-                challenges: s.reflection.challenges ?? "",
-                nextSteps: s.reflection.nextSteps ?? "",
-                moodEmoji: s.reflection.moodEmoji ?? "",
-              }
-            : null,
-        }))}
-      />
     </div>
   )
 }
