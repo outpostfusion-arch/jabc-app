@@ -23,8 +23,9 @@ const SESSION_META: Record<number, { icon: string; label?: string }> = {
 }
 
 const LEVEL_BADGE: Record<string, { bg: string; color: string; label: string }> = {
-  JUNIOR: { bg: "#DCFCE7", color: "#166534", label: "Junior" },
-  SENIOR: { bg: "#DBEAFE", color: "#1E40AF", label: "Senior" },
+  PRIMARY: { bg: "#FEF3C7", color: "#92400E", label: "Primary" },
+  JUNIOR:  { bg: "#DCFCE7", color: "#166534", label: "Junior" },
+  SENIOR:  { bg: "#DBEAFE", color: "#1E40AF", label: "Senior" },
 }
 
 export default async function TeacherDashboardPage({
@@ -69,7 +70,14 @@ export default async function TeacherDashboardPage({
 
   const inProgress = students.filter((s) => s.sessionProgress.some((p) => p.status === "IN_PROGRESS")).length
 
-  const levelLabel = level === "JUNIOR" ? "Junior" : level === "SENIOR" ? "Senior" : "All"
+  const levelLabel = level === "PRIMARY" ? "Primary" : level === "JUNIOR" ? "Junior" : level === "SENIOR" ? "Senior" : "All"
+
+  const LEVEL_COLOR: Record<string, string> = {
+    PRIMARY: "linear-gradient(135deg, #F59E0B, #D97706)",
+    JUNIOR:  "linear-gradient(135deg, #22C55E, #16A34A)",
+    SENIOR:  "linear-gradient(135deg, #6366F1, #8B5CF6)",
+  }
+  const progressBarBg = level ? (LEVEL_COLOR[level] ?? "linear-gradient(135deg, #6366F1, #8B5CF6)") : "linear-gradient(135deg, #6366F1, #8B5CF6)"
 
   return (
     <div>
@@ -88,9 +96,9 @@ export default async function TeacherDashboardPage({
               {students.length} {levelLabel !== "All" ? `${levelLabel} ` : ""}students · {inProgress} actively working
             </p>
             <div className="hidden md:flex items-center gap-3 mt-3">
-              <span className="text-4xl">🚀</span>
+              <span className="text-4xl">🍃</span>
               <div className="flex flex-col">
-                <span className="text-4xl font-black text-white leading-none">JABC</span>
+                <span className="text-4xl font-black text-white leading-none">Arrow Leaf</span>
                 <span className="text-sm font-semibold" style={{ color: "rgba(255,255,255,0.6)" }}>Entrepreneurship program</span>
               </div>
             </div>
@@ -120,9 +128,7 @@ export default async function TeacherDashboardPage({
         {/* Table header bar */}
         <div
           className="px-6 py-4 flex items-center justify-between"
-          style={{
-            background: "linear-gradient(135deg, #6366F1, #8B5CF6)",
-          }}
+          style={{ background: progressBarBg }}
         >
           <span className="font-black text-lg text-white">
             Student Progress {levelLabel !== "All" && `— ${levelLabel}`}

@@ -131,7 +131,7 @@ export default function NewStudentPage() {
           <div>
             <label className="block text-sm font-bold mb-2" style={{ color: "#64748B" }}>Level</label>
             <div className="flex gap-3">
-              {[{ id: "", label: "Unassigned" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
+              {[{ id: "", label: "Unassigned" }, { id: "group-primary", label: "🟡 Primary" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
                 <button
                   key={opt.id}
                   type="button"
@@ -201,7 +201,7 @@ export default function NewStudentPage() {
             <div className="mt-4">
               <label className="block text-sm font-bold mb-2" style={{ color: "#64748B" }}>Level</label>
               <div className="flex gap-3">
-                {[{ id: "", label: "Unassigned" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
+                {[{ id: "", label: "Unassigned" }, { id: "group-primary", label: "🟡 Primary" }, { id: "group-junior", label: "🟢 Junior" }, { id: "group-senior", label: "🔵 Senior" }].map((opt) => (
                   <button
                     key={opt.id}
                     type="button"

@@ -3,19 +3,19 @@
 import { useRouter, useSearchParams } from "next/navigation"
 
 const TABS = [
-  { label: "🟢 Junior", value: "JUNIOR" },
-  { label: "🔵 Senior", value: "SENIOR" },
+  { label: "Primary", value: "PRIMARY", color: "#F59E0B", activeColor: "white", shadow: "rgba(245,158,11,0.4)" },
+  { label: "Junior", value: "JUNIOR", color: "#22C55E", activeColor: "white", shadow: "rgba(34,197,94,0.4)" },
+  { label: "Senior", value: "SENIOR", color: "#6366F1", activeColor: "white", shadow: "rgba(99,102,241,0.4)" },
 ]
-
-const TAB_WIDTH = 120
 
 export default function LevelTabs() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const active = searchParams.get("level") ?? ""
-  const activeIndex = Math.max(0, TABS.findIndex((t) => t.value === active))
 
   function select(value: string) {
+    // Save to cookie so student preview picks it up
+    document.cookie = `jabc-level-preview=${value}; path=/; max-age=86400`
     const params = new URLSearchParams(searchParams.toString())
     if (value) params.set("level", value)
     else params.delete("level")
@@ -23,45 +23,29 @@ export default function LevelTabs() {
   }
 
   return (
-    <div
-      className="inline-flex rounded-2xl p-1 mb-6 relative"
-      style={{ background: "#F1F5F9" }}
-    >
-      {/* Sliding pill */}
-      <div
-        style={{
-          position: "absolute",
-          top: 4,
-          bottom: 4,
-          left: 4 + activeIndex * TAB_WIDTH,
-          width: TAB_WIDTH,
-          background: "#6366F1",
-          borderRadius: 10,
-          boxShadow: "0 4px 12px rgba(99,102,241,0.4)",
-          transition: "left 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
-        }}
-      />
-
+    <div className="flex gap-3 mb-6 flex-wrap">
       {TABS.map((tab) => {
         const isActive = active === tab.value
         return (
           <button
             key={tab.value}
             onClick={() => select(tab.value)}
-            style={{
-              width: TAB_WIDTH,
-              padding: "8px 0",
-              borderRadius: 10,
-              fontSize: 13,
-              fontWeight: 700,
-              position: "relative",
-              zIndex: 1,
-              color: isActive ? "white" : "#64748B",
-              transition: "color 0.35s ease",
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-            }}
+            className="px-6 py-2.5 rounded-2xl text-sm font-black transition-all"
+            style={
+              isActive
+                ? {
+                    background: tab.color,
+                    color: tab.activeColor,
+                    boxShadow: `0 4px 14px ${tab.shadow}`,
+                    transform: "translateY(-1px)",
+                  }
+                : {
+                    background: "white",
+                    color: tab.color,
+                    border: `2px solid ${tab.color}`,
+                    transform: "translateY(0)",
+                  }
+            }
           >
             {tab.label}
           </button>

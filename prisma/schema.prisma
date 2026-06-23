@@ -10,6 +10,7 @@ datasource db {
 // ─── USERS ──────────────────────────────────────────────────────────────────
 
 enum Level {
+  PRIMARY
   JUNIOR
   SENIOR
 }

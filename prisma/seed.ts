@@ -61,6 +61,15 @@ async function main() {
     })
   }
 
+  // Seed class groups
+  for (const group of [
+    { id: "group-primary", name: "Primary", level: "PRIMARY" as const },
+    { id: "group-junior",  name: "Junior",  level: "JUNIOR"  as const },
+    { id: "group-senior",  name: "Senior",  level: "SENIOR"  as const },
+  ]) {
+    await prisma.classGroup.upsert({ where: { id: group.id }, update: {}, create: group })
+  }
+
   // Seed badges
   const badges = [
     { slug: "business-architect", name: "Business Architect", description: "Completed all 9 blocks of the Business Model Canvas", emoji: "🏗️", pointValue: 25 },
