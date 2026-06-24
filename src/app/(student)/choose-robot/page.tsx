@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { ROBOTS, robotAvatarUrl } from "@/components/arrow/robots"
 import { UNLOCKS, SESSION_LABELS, RARITY_CONFIG, CATEGORY_CONFIG } from "@/components/arrow/unlocks"
 import Link from "next/link"
@@ -8,11 +9,30 @@ import Link from "next/link"
 const TABS = ["Choose Robot", "Unlocks Preview"]
 
 export default function ChooseRobotPage() {
+  const router = useRouter()
   const [selected, setSelected] = useState<string | null>(null)
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState<number | null>(null)
+  const [saving, setSaving] = useState(false)
 
   const filteredUnlocks = filter ? UNLOCKS.filter((u) => u.session === filter) : UNLOCKS
+
+  async function confirmRobot() {
+    if (!selected || saving) return
+    setSaving(true)
+    try {
+      const res = await fetch("/api/robot", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ robotId: selected }),
+      })
+      if (!res.ok) throw new Error("save failed")
+      router.push("/dashboard")
+      router.refresh()
+    } catch {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="max-w-5xl mx-auto pb-16">
@@ -100,7 +120,8 @@ export default function ChooseRobotPage() {
           {/* Confirm button */}
           <div className="flex items-center gap-4">
             <button
-              disabled={!selected}
+              disabled={!selected || saving}
+              onClick={confirmRobot}
               className="px-8 py-4 rounded-2xl font-black text-white text-lg transition-all"
               style={{
                 background: selected ? "linear-gradient(135deg, #6366F1, #8B5CF6)" : "#E2E8F0",
@@ -108,7 +129,11 @@ export default function ChooseRobotPage() {
                 boxShadow: selected ? "0 8px 24px -4px rgba(99,102,241,0.45)" : "none",
               }}
             >
-              {selected ? `Let's Go with ${ROBOTS.find(r => r.id === selected)?.name}! →` : "Pick a robot above"}
+              {saving
+                ? "Saving…"
+                : selected
+                ? `Let's Go with ${ROBOTS.find(r => r.id === selected)?.name}! →`
+                : "Pick a robot above"}
             </button>
             <button onClick={() => setTab(1)} className="text-sm font-bold" style={{ color: "#6366F1" }}>
               See all unlocks →

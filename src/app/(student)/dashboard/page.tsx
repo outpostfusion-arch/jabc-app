@@ -30,9 +30,40 @@ type Level = keyof typeof LEVEL_THEME
 
 const TRACKS = [
   {
+    title: "Digital Design & Marketing",
+    tagline: "Build a brand, create content, and learn to market like a pro.",
+    icon: "📱",
+    gradient: "linear-gradient(135deg, #F59E0B, #FBBF24)",
+    shadow: "rgba(245,158,11,0.4)",
+    href: "/track/digital-design",
+  },
+  {
     title: "3D Design",
     tagline: "Design and print real objects you can hold in your hands.",
-    icon: "🖨️",
+    icon: (
+      <svg width="48" height="46" viewBox="0 0 56 54" fill="none">
+        {/* Printer front panel — light blue */}
+        <rect x="0" y="0" width="56" height="54" rx="10" fill="#5BA4D9"/>
+        {/* Inner chamber — dark */}
+        <rect x="4" y="4" width="48" height="34" rx="5" fill="#2D3A4A"/>
+        {/* Horizontal rail — grey */}
+        <rect x="7" y="14" width="42" height="5" rx="2.5" fill="#8FA3B4"/>
+        {/* Print head block */}
+        <rect x="27" y="8" width="15" height="15" rx="2" fill="#1B2736"/>
+        {/* Nozzle */}
+        <rect x="32.5" y="23" width="4" height="9" rx="1.5" fill="#8FA3B4"/>
+        {/* Printed object — white vase */}
+        <rect x="23" y="27" width="18" height="3" rx="1.5" fill="white"/>
+        <path d="M25 30 C22 35 26 39 30 39.5 L34 39.5 C38 39 42 35 39 30 Z" fill="white"/>
+        <rect x="27" y="39.5" width="10" height="2.5" rx="1" fill="white"/>
+        {/* Bottom control panel */}
+        <rect x="4" y="43" width="22" height="8" rx="3" fill="#1B2736"/>
+        {/* Red button */}
+        <circle cx="36" cy="47" r="4.5" fill="#E53E3E"/>
+        {/* Yellow button */}
+        <circle cx="48" cy="47" r="4.5" fill="#F6C90E"/>
+      </svg>
+    ),
     gradient: "linear-gradient(135deg, #6366F1, #818CF8)",
     shadow: "rgba(99,102,241,0.4)",
     href: "/track/3d-design",
@@ -64,12 +95,18 @@ export default async function DashboardPage() {
     select: {
       displayName: true,
       role: true,
+      robotId: true,
       classGroup: { select: { level: true } },
     },
   })
 
   // Teachers in student-preview mode use the cookie they set via LevelTabs
   const isTeacher = user?.role === "TEACHER"
+
+  // Reaching /dashboard means the student experience — lock the tracks
+  // until a robot is chosen. This applies to teachers previewing too,
+  // so they see exactly what students see.
+  const locked = !user?.robotId
   const levelRaw = isTeacher
     ? cookieStore.get("jabc-level-preview")?.value
     : user?.classGroup?.level ?? undefined
@@ -113,22 +150,46 @@ export default async function DashboardPage() {
       </div>
 
       {/* Choose robot CTA */}
-      <Link
-        href="/choose-robot"
-        className="flex items-center justify-between px-6 py-4 rounded-2xl mb-6 transition-all hover:opacity-90"
-        style={{ background: "linear-gradient(135deg, #6366F1, #8B5CF6)", boxShadow: "0 4px 16px rgba(99,102,241,0.35)" }}
-      >
-        <div>
-          <div className="font-black text-white">Choose Your Robot 🤖</div>
-          <div className="text-xs font-semibold mt-0.5" style={{ color: "rgba(255,255,255,0.7)" }}>Pick your character + preview 48 unlocks</div>
-        </div>
-        <span className="text-2xl">→</span>
-      </Link>
+      <div className="relative mb-6">
+        {locked && (
+          <div className="absolute -top-3 left-6 z-10 animate-bounce">
+            <span
+              className="px-3 py-1 rounded-full text-xs font-black shadow-lg whitespace-nowrap"
+              style={{ background: "#1E293B", color: "white" }}
+            >
+              👇 Start here
+            </span>
+          </div>
+        )}
+        <Link
+          href="/choose-robot"
+          className="flex items-center justify-between px-6 py-4 rounded-2xl transition-all hover:opacity-90"
+          style={{
+            background: locked
+              ? "linear-gradient(135deg, #F59E0B, #FB923C)"
+              : "linear-gradient(135deg, #6366F1, #8B5CF6)",
+            boxShadow: locked ? "0 4px 20px rgba(245,158,11,0.5)" : "0 4px 16px rgba(99,102,241,0.35)",
+            ...(locked ? { animation: "robot-cta-pulse 2s ease-in-out infinite" } : {}),
+          }}
+        >
+          <div>
+            <div className="font-black text-white">
+              {locked ? "Choose Your Robot to Begin! 🤖" : "Choose Your Robot 🤖"}
+            </div>
+            <div className="text-xs font-semibold mt-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>
+              {locked
+                ? "Pick your character to unlock all the maker tracks"
+                : "Pick your character + preview 48 unlocks"}
+            </div>
+          </div>
+          <span className="text-2xl">→</span>
+        </Link>
+      </div>
 
       {/* Maker Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {TRACKS.map((track) => (
-          <MakerCard key={track.href} {...track} />
+          <MakerCard key={track.href} {...track} locked={locked} />
         ))}
       </div>
     </div>

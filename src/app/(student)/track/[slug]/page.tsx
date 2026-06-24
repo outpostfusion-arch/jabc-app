@@ -1,15 +1,31 @@
 import Link from "next/link"
+import { redirect } from "next/navigation"
+import { auth } from "@/lib/auth"
+import { prisma } from "@/lib/prisma"
 
 const TRACK_META: Record<string, { title: string; icon: string; gradient: string; shadow: string }> = {
-  "3d-design":  { title: "3D Design",            icon: "🖨️", gradient: "linear-gradient(135deg, #6366F1, #818CF8)", shadow: "rgba(99,102,241,0.35)" },
-  "video-game": { title: "Video Game Building",   icon: "🎮", gradient: "linear-gradient(135deg, #A855F7, #C084FC)", shadow: "rgba(168,85,247,0.35)" },
-  "pixel-art":  { title: "Pixel Art & Animation", icon: "🎨", gradient: "linear-gradient(135deg, #F43F5E, #FB923C)", shadow: "rgba(244,63,94,0.35)" },
+  "digital-design": { title: "Digital Design & Marketing", icon: "📱", gradient: "linear-gradient(135deg, #F59E0B, #FBBF24)", shadow: "rgba(245,158,11,0.35)" },
+  "3d-design":      { title: "3D Design",                  icon: "🖨️", gradient: "linear-gradient(135deg, #6366F1, #818CF8)", shadow: "rgba(99,102,241,0.35)" },
+  "video-game":     { title: "Video Game Building",         icon: "🎮", gradient: "linear-gradient(135deg, #A855F7, #C084FC)", shadow: "rgba(168,85,247,0.35)" },
+  "pixel-art":      { title: "Pixel Art & Animation",       icon: "🎨", gradient: "linear-gradient(135deg, #F43F5E, #FB923C)", shadow: "rgba(244,63,94,0.35)" },
 }
 
 const TUTORIAL_NUMS = [1, 2, 3, 4, 5, 6]
 
 export default async function TrackPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+
+  // Gate: a robot must be chosen before opening any track. Applies to
+  // teachers previewing the student experience too.
+  const session = await auth()
+  if (session) {
+    const me = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { robotId: true },
+    })
+    if (!me?.robotId) redirect("/choose-robot")
+  }
+
   const meta = TRACK_META[slug] ?? { title: "Track", icon: "📚", gradient: "linear-gradient(135deg, #6366F1, #8B5CF6)", shadow: "rgba(99,102,241,0.35)" }
 
   return (

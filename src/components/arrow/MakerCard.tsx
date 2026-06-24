@@ -6,13 +6,14 @@ import Link from "next/link"
 interface MakerCardProps {
   title: string
   tagline: string
-  icon: string
+  icon: React.ReactNode
   gradient: string
   shadow: string
   href: string
+  locked?: boolean
 }
 
-export default function MakerCard({ title, tagline, icon, gradient, shadow, href }: MakerCardProps) {
+export default function MakerCard({ title, tagline, icon, gradient, shadow, href, locked = false }: MakerCardProps) {
   const [flipped, setFlipped] = useState(false)
 
   return (
@@ -21,7 +22,7 @@ export default function MakerCard({ title, tagline, icon, gradient, shadow, href
         style={{
           position: "relative",
           width: "100%",
-          aspectRatio: "3 / 4",
+          minHeight: "440px",
           transformStyle: "preserve-3d",
           transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
           transition: "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -54,21 +55,43 @@ export default function MakerCard({ title, tagline, icon, gradient, shadow, href
 
           {/* Bottom actions */}
           <div className="p-6 flex flex-col gap-3">
-            <button
-              onClick={() => setFlipped(true)}
-              className="w-full py-3 rounded-2xl text-sm font-black transition-all hover:opacity-90 active:scale-95"
-              style={{ background: "rgba(255,255,255,0.2)", color: "white", border: "2px solid rgba(255,255,255,0.35)" }}
-            >
-              What&apos;s inside? 👀
-            </button>
-            <Link
-              href={href}
-              className="w-full py-3 rounded-2xl text-sm font-black text-center transition-all hover:opacity-90 active:scale-95"
-              style={{ background: "white", color: "#1E293B" }}
-            >
-              Start Session →
-            </Link>
+            {locked ? (
+              <Link
+                href="/choose-robot"
+                className="w-full py-3 rounded-2xl text-sm font-black text-center transition-all hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
+                style={{ background: "white", color: "#1E293B" }}
+              >
+                🔒 Choose a Robot First
+              </Link>
+            ) : (
+              <>
+                <button
+                  onClick={() => setFlipped(true)}
+                  className="w-full py-3 rounded-2xl text-sm font-black transition-all hover:opacity-90 active:scale-95"
+                  style={{ background: "rgba(255,255,255,0.2)", color: "white", border: "2px solid rgba(255,255,255,0.35)" }}
+                >
+                  What&apos;s inside? 👀
+                </button>
+                <Link
+                  href={href}
+                  className="w-full py-3 rounded-2xl text-sm font-black text-center transition-all hover:opacity-90 active:scale-95"
+                  style={{ background: "white", color: "#1E293B" }}
+                >
+                  Start Session →
+                </Link>
+              </>
+            )}
           </div>
+
+          {/* Lock overlay */}
+          {locked && (
+            <div
+              className="absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center text-lg"
+              style={{ background: "rgba(0,0,0,0.35)", backdropFilter: "blur(2px)" }}
+            >
+              🔒
+            </div>
+          )}
         </div>
 
         {/* BACK */}
