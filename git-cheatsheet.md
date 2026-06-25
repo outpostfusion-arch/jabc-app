@@ -37,5 +37,14 @@
 |---|---|
 | `git push` | Upload your commits to GitHub |
 
+## My Shortcuts (Aliases)
+| Command | What it does |
+|---|---|
+| `git acp "description"` | **All-in-one:** stages everything, commits with your message, AND pushes to GitHub — replaces the 3 steps below |
+
+⚠️ Always put the message in **quotes**: `git acp "fixed the shop"`
+⚠️ `acp` pushes to GitHub instantly — no pause to review first. Use the 3 separate steps when you want that review gap.
+
 ---
-**Golden rule:** Edit files → `git add .` → `git commit -m "..."` → done.
+**Golden rule:** Edit files → `git add .` → `git commit -m "..."` → `git push`
+**Shortcut:** Edit files → `git acp "..."` (does all three)
