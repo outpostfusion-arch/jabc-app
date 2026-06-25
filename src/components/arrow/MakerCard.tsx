@@ -11,9 +11,21 @@ interface MakerCardProps {
   shadow: string
   href: string
   locked?: boolean
+  lockLabel?: string
+  lockHref?: string
 }
 
-export default function MakerCard({ title, tagline, icon, gradient, shadow, href, locked = false }: MakerCardProps) {
+export default function MakerCard({
+  title,
+  tagline,
+  icon,
+  gradient,
+  shadow,
+  href,
+  locked = false,
+  lockLabel = "🔒 Locked",
+  lockHref,
+}: MakerCardProps) {
   const [flipped, setFlipped] = useState(false)
 
   return (
@@ -56,13 +68,22 @@ export default function MakerCard({ title, tagline, icon, gradient, shadow, href
           {/* Bottom actions */}
           <div className="p-6 flex flex-col gap-3">
             {locked ? (
-              <Link
-                href="/choose-robot"
-                className="w-full py-3 rounded-2xl text-sm font-black text-center transition-all hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
-                style={{ background: "white", color: "#1E293B" }}
-              >
-                🔒 Choose a Robot First
-              </Link>
+              lockHref ? (
+                <Link
+                  href={lockHref}
+                  className="w-full py-3 rounded-2xl text-sm font-black text-center transition-all hover:opacity-90 active:scale-95 flex items-center justify-center gap-2"
+                  style={{ background: "white", color: "#1E293B" }}
+                >
+                  {lockLabel}
+                </Link>
+              ) : (
+                <div
+                  className="w-full py-3 rounded-2xl text-sm font-black text-center flex items-center justify-center gap-2 cursor-not-allowed"
+                  style={{ background: "rgba(255,255,255,0.5)", color: "#64748B" }}
+                >
+                  {lockLabel}
+                </div>
+              )
             ) : (
               <>
                 <button

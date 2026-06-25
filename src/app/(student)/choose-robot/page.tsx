@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ROBOTS, robotAvatarUrl } from "@/components/arrow/robots"
-import { UNLOCKS, SESSION_LABELS, RARITY_CONFIG, CATEGORY_CONFIG } from "@/components/arrow/unlocks"
+import { UNLOCKS, SESSION_LABELS, RARITY_CONFIG, unlockCost } from "@/components/arrow/unlocks"
 import Link from "next/link"
 
-const TABS = ["Choose Robot", "Unlocks Preview"]
+const TABS = ["Choose Robot", "Unlock Shop"]
 
 export default function ChooseRobotPage() {
   const router = useRouter()
@@ -14,6 +14,44 @@ export default function ChooseRobotPage() {
   const [tab, setTab] = useState(0)
   const [filter, setFilter] = useState<number | null>(null)
   const [saving, setSaving] = useState(false)
+
+  // Coin balance + owned unlocks (the earn-and-spend loop)
+  const [points, setPoints] = useState<number | null>(null)
+  const [owned, setOwned] = useState<string[]>([])
+  const [buying, setBuying] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("/api/unlocks")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d) {
+          setPoints(d.points)
+          setOwned(d.owned)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  async function buyUnlock(id: string) {
+    if (buying) return
+    setBuying(id)
+    try {
+      const res = await fetch("/api/unlocks/buy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ unlockId: id }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (res.ok) {
+        setPoints(data.points)
+        setOwned((prev) => [...prev, id])
+      }
+    } catch {
+      /* ignore */
+    } finally {
+      setBuying(null)
+    }
+  }
 
   const filteredUnlocks = filter ? UNLOCKS.filter((u) => u.session === filter) : UNLOCKS
 
@@ -42,13 +80,22 @@ export default function ChooseRobotPage() {
         className="rounded-3xl p-8 mb-8 relative overflow-hidden"
         style={{ background: "linear-gradient(135deg, #1E293B 0%, #334155 100%)", boxShadow: "0 16px 32px -8px rgba(15,23,42,0.4)" }}
       >
+        {/* Coin balance */}
+        <div
+          className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full"
+          style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)" }}
+        >
+          <span className="text-xl">🪙</span>
+          <span className="font-black text-white text-lg">{points ?? "—"}</span>
+        </div>
+
         <div className="flex items-center gap-3 mb-2">
           <span className="text-3xl">🍃</span>
           <span className="text-xl font-black text-white">Arrow Leaf</span>
         </div>
         <h1 className="text-3xl font-black text-white">Choose Your Robot</h1>
         <p className="mt-1 font-semibold" style={{ color: "rgba(255,255,255,0.65)" }}>
-          Pick your character — then unlock upgrades as you complete sessions
+          Pick your character — then spend coins to unlock upgrades. Earn coins by completing sessions!
         </p>
       </div>
 
@@ -178,15 +225,19 @@ export default function ChooseRobotPage() {
             {filteredUnlocks.map((unlock) => {
               const rarity = RARITY_CONFIG[unlock.rarity]
               const session = SESSION_LABELS[unlock.session]
-              const category = CATEGORY_CONFIG[unlock.category]
+              const cost = unlockCost(unlock.rarity)
+              const isOwned = owned.includes(unlock.id)
+              const canAfford = points !== null && points >= cost
+              const isBuying = buying === unlock.id
               return (
                 <div
                   key={unlock.id}
                   className="rounded-2xl p-4 flex flex-col gap-2"
                   style={{
                     background: "white",
-                    border: `2px solid ${unlock.rarity === "legendary" ? "#F59E0B" : unlock.rarity === "rare" ? "#6366F1" : "#E2E8F0"}`,
+                    border: `2px solid ${isOwned ? "#22C55E" : unlock.rarity === "legendary" ? "#F59E0B" : unlock.rarity === "rare" ? "#6366F1" : "#E2E8F0"}`,
                     boxShadow: unlock.rarity === "legendary" ? "0 4px 16px rgba(245,158,11,0.2)" : "0 2px 8px rgba(0,0,0,0.04)",
+                    opacity: isOwned ? 1 : canAfford ? 1 : 0.85,
                   }}
                 >
                   {/* Emoji */}
@@ -205,10 +256,28 @@ export default function ChooseRobotPage() {
                     </span>
                   </div>
 
-                  {/* Category */}
-                  <div className="text-xs text-center font-semibold" style={{ color: "#94A3B8" }}>
-                    {category.emoji} {category.label}
-                  </div>
+                  {/* Buy / Owned button */}
+                  {isOwned ? (
+                    <div
+                      className="mt-1 w-full py-2 rounded-xl text-xs font-black text-center flex items-center justify-center gap-1"
+                      style={{ background: "#DCFCE7", color: "#166534" }}
+                    >
+                      ✓ Owned
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => buyUnlock(unlock.id)}
+                      disabled={!canAfford || isBuying}
+                      className="mt-1 w-full py-2 rounded-xl text-xs font-black text-center flex items-center justify-center gap-1 transition-all active:scale-95"
+                      style={
+                        canAfford
+                          ? { background: "#1E293B", color: "white", cursor: "pointer" }
+                          : { background: "#F1F5F9", color: "#94A3B8", cursor: "not-allowed" }
+                      }
+                    >
+                      {isBuying ? "…" : <>🪙 {cost}</>}
+                    </button>
+                  )}
                 </div>
               )
             })}

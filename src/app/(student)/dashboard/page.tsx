@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { cookies } from "next/headers"
 import MakerCard from "@/components/arrow/MakerCard"
-import RobotMascot from "@/components/arrow/RobotMascot"
+import ResetMascot from "@/components/arrow/ResetMascot"
 import Link from "next/link"
 
 const LEVEL_THEME = {
@@ -36,6 +36,7 @@ const TRACKS = [
     gradient: "linear-gradient(135deg, #F59E0B, #FBBF24)",
     shadow: "rgba(245,158,11,0.4)",
     href: "/track/digital-design",
+    unlock: "robot" as const,
   },
   {
     title: "3D Design",
@@ -67,6 +68,7 @@ const TRACKS = [
     gradient: "linear-gradient(135deg, #6366F1, #818CF8)",
     shadow: "rgba(99,102,241,0.4)",
     href: "/track/3d-design",
+    unlock: "later" as const,
   },
   {
     title: "Video Game Building",
@@ -75,6 +77,7 @@ const TRACKS = [
     gradient: "linear-gradient(135deg, #A855F7, #C084FC)",
     shadow: "rgba(168,85,247,0.4)",
     href: "/track/video-game",
+    unlock: "later" as const,
   },
   {
     title: "Pixel Art & Animation",
@@ -83,6 +86,7 @@ const TRACKS = [
     gradient: "linear-gradient(135deg, #F43F5E, #FB923C)",
     shadow: "rgba(244,63,94,0.4)",
     href: "/track/pixel-art",
+    unlock: "later" as const,
   },
 ]
 
@@ -103,10 +107,12 @@ export default async function DashboardPage() {
   // Teachers in student-preview mode use the cookie they set via LevelTabs
   const isTeacher = user?.role === "TEACHER"
 
-  // Reaching /dashboard means the student experience — lock the tracks
-  // until a robot is chosen. This applies to teachers previewing too,
-  // so they see exactly what students see.
-  const locked = !user?.robotId
+  // Reaching /dashboard means the student experience.
+  // - No robot yet: every card is locked behind choosing a robot.
+  // - Robot chosen: only the "robot"-unlock track opens; "later" tracks
+  //   stay locked (future progression).
+  // Applies to teachers previewing too, so they see what students see.
+  const hasRobot = !!user?.robotId
   const levelRaw = isTeacher
     ? cookieStore.get("jabc-level-preview")?.value
     : user?.classGroup?.level ?? undefined
@@ -124,9 +130,12 @@ export default async function DashboardPage() {
           boxShadow: `0 20px 40px -10px ${theme ? theme.shadow : "rgba(15,23,42,0.4)"}`,
         }}
       >
-        {/* Robot mascot */}
-        <div className="absolute -right-2 -bottom-2 opacity-90 hidden sm:block" style={{ pointerEvents: "none" }}>
-          <RobotMascot size={120} />
+        {/* Robot mascot — clickable demo-reset for teachers, decorative for students */}
+        <div
+          className="absolute -right-2 -bottom-2 opacity-90 hidden sm:block"
+          style={{ pointerEvents: isTeacher ? "auto" : "none" }}
+        >
+          <ResetMascot size={120} canReset={isTeacher} />
         </div>
 
         <div className="flex items-center gap-3 mb-3 relative">
@@ -151,7 +160,7 @@ export default async function DashboardPage() {
 
       {/* Choose robot CTA */}
       <div className="relative mb-6">
-        {locked && (
+        {!hasRobot && (
           <div className="absolute -top-3 left-6 z-10 animate-bounce">
             <span
               className="px-3 py-1 rounded-full text-xs font-black shadow-lg whitespace-nowrap"
@@ -165,20 +174,20 @@ export default async function DashboardPage() {
           href="/choose-robot"
           className="flex items-center justify-between px-6 py-4 rounded-2xl transition-all hover:opacity-90"
           style={{
-            background: locked
+            background: !hasRobot
               ? "linear-gradient(135deg, #F59E0B, #FB923C)"
               : "linear-gradient(135deg, #6366F1, #8B5CF6)",
-            boxShadow: locked ? "0 4px 20px rgba(245,158,11,0.5)" : "0 4px 16px rgba(99,102,241,0.35)",
-            ...(locked ? { animation: "robot-cta-pulse 2s ease-in-out infinite" } : {}),
+            boxShadow: !hasRobot ? "0 4px 20px rgba(245,158,11,0.5)" : "0 4px 16px rgba(99,102,241,0.35)",
+            ...(!hasRobot ? { animation: "robot-cta-pulse 2s ease-in-out infinite" } : {}),
           }}
         >
           <div>
             <div className="font-black text-white">
-              {locked ? "Choose Your Robot to Begin! 🤖" : "Choose Your Robot 🤖"}
+              {!hasRobot ? "Choose Your Robot to Begin! 🤖" : "Choose Your Robot 🤖"}
             </div>
             <div className="text-xs font-semibold mt-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>
-              {locked
-                ? "Pick your character to unlock all the maker tracks"
+              {!hasRobot
+                ? "Pick your character to unlock your first maker track"
                 : "Pick your character + preview 48 unlocks"}
             </div>
           </div>
@@ -188,9 +197,24 @@ export default async function DashboardPage() {
 
       {/* Maker Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {TRACKS.map((track) => (
-          <MakerCard key={track.href} {...track} locked={locked} />
-        ))}
+        {TRACKS.map((track) => {
+          // No robot → locked behind the picker.
+          // Robot chosen → only "robot"-unlock tracks open; others stay locked.
+          const lockedForRobot = !hasRobot
+          const lockedForLater = hasRobot && track.unlock === "later"
+          const locked = lockedForRobot || lockedForLater
+          const lockLabel = lockedForRobot ? "🔒 Choose a Robot First" : "🔒 Coming Soon"
+          const lockHref = lockedForRobot ? "/choose-robot" : undefined
+          return (
+            <MakerCard
+              key={track.href}
+              {...track}
+              locked={locked}
+              lockLabel={lockLabel}
+              lockHref={lockHref}
+            />
+          )
+        })}
       </div>
     </div>
   )

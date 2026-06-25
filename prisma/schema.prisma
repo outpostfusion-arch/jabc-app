@@ -55,6 +55,7 @@ model User {
   uploadedVideos    Video[]
   userBadges        UserBadge[]
   reflection        StudentReflection?
+  unlocks           UserUnlock[]
 }
 
 enum Role {
@@ -351,4 +352,18 @@ model UserBadge {
   badge Badge @relation(fields: [badgeId], references: [id])
 
   @@unique([userId, badgeId])
+}
+
+// An unlock (cosmetic/reward) a student has purchased with coins.
+// unlockId references the in-code UNLOCKS list (src/components/arrow/unlocks.ts),
+// so there's no separate Unlock table to keep in sync.
+model UserUnlock {
+  id        String   @id @default(cuid())
+  userId    String
+  unlockId  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, unlockId])
 }

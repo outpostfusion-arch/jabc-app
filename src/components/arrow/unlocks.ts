@@ -79,9 +79,14 @@ export const SESSION_LABELS: Record<number, { label: string; color: string; bg: 
 }
 
 export const RARITY_CONFIG = {
-  common:    { label: "Common",    color: "#64748B", bg: "#F1F5F9", star: "⭐" },
-  rare:      { label: "Rare",      color: "#1D4ED8", bg: "#DBEAFE", star: "💎" },
-  legendary: { label: "Legendary", color: "#92400E", bg: "#FEF3C7", star: "🏆" },
+  common:    { label: "Common",    color: "#64748B", bg: "#F1F5F9", star: "⭐", cost: 20 },
+  rare:      { label: "Rare",      color: "#1D4ED8", bg: "#DBEAFE", star: "💎", cost: 50 },
+  legendary: { label: "Legendary", color: "#92400E", bg: "#FEF3C7", star: "🏆", cost: 120 },
+}
+
+/** Coin cost to unlock an item, based on its rarity. */
+export function unlockCost(rarity: UnlockDef["rarity"]): number {
+  return RARITY_CONFIG[rarity].cost
 }
 
 export const CATEGORY_CONFIG = {

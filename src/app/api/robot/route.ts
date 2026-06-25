@@ -23,3 +23,20 @@ export async function PUT(req: NextRequest) {
 
   return NextResponse.json({ ok: true, robotId })
 }
+
+// Clears the current user's robot, returning the dashboard to its locked
+// "Choose Your Robot" state. Teacher-only — a demo/preview reset, so real
+// students can't wipe their own choice.
+export async function DELETE() {
+  const session = await auth()
+  if (!session || session.user.role !== "TEACHER") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { robotId: null },
+  })
+
+  return NextResponse.json({ ok: true, robotId: null })
+}

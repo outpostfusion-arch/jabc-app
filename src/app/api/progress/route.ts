@@ -18,12 +18,21 @@ export async function POST(req: NextRequest) {
   const session = await auth()
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   const { sessionId, status } = await req.json()
+  const sid = parseInt(sessionId)
+
+  // Was this session already completed? If so, don't award coins again.
+  const existing = await prisma.sessionProgress.findUnique({
+    where: { userId_sessionId: { userId: session.user.id, sessionId: sid } },
+    select: { status: true },
+  })
+  const newlyCompleted = status === "COMPLETED" && existing?.status !== "COMPLETED"
+
   const progress = await prisma.sessionProgress.upsert({
-    where: { userId_sessionId: { userId: session.user.id, sessionId: parseInt(sessionId) } },
-    create: { userId: session.user.id, sessionId: parseInt(sessionId), status, completedAt: status === "COMPLETED" ? new Date() : null },
+    where: { userId_sessionId: { userId: session.user.id, sessionId: sid } },
+    create: { userId: session.user.id, sessionId: sid, status, completedAt: status === "COMPLETED" ? new Date() : null },
     update: { status, completedAt: status === "COMPLETED" ? new Date() : undefined },
   })
-  if (status === "COMPLETED") {
+  if (newlyCompleted) {
     await prisma.user.update({ where: { id: session.user.id }, data: { points: { increment: 25 } } })
   }
   return NextResponse.json(progress)
