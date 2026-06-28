@@ -1,32 +1,64 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import { ROBOTS } from "@/components/arrow/robots"
+
+const VALID = {
+  face:    new Set(["round01","round02","square01","square02","square03","square04"]),
+  eyes:    new Set(["bulging","dizzy","eva","frame1","frame2","glow","happy","hearts","robocop","round","roundFrame01","roundFrame02","sensor","shade01"]),
+  top:     new Set(["antenna","antennaCrooked","bulb01","glowingBulb01","glowingBulb02","horns","lights","pyramid","radar"]),
+  sides:   new Set(["antenna01","antenna02","cables01","cables02","round","square","squareAssymetric"]),
+  texture: new Set(["camo01","camo02","circuits","dirty01","dirty02","dots","grunge01","grunge02"]),
+  mouth:   new Set(["bite","diagram","grill01","grill02","grill03","smile01","smile02","square01","square02"]),
+}
+
+function isValidConfig(c: unknown): c is { face: string; eyes: string; top: string; sides: string; texture: string; mouth: string } {
+  if (!c || typeof c !== "object") return false
+  const o = c as Record<string, unknown>
+  return (
+    typeof o.face === "string"    && VALID.face.has(o.face)       &&
+    typeof o.eyes === "string"    && VALID.eyes.has(o.eyes)       &&
+    typeof o.top === "string"     && VALID.top.has(o.top)         &&
+    typeof o.sides === "string"   && VALID.sides.has(o.sides)     &&
+    typeof o.texture === "string" && VALID.texture.has(o.texture) &&
+    (o.mouth === undefined || (typeof o.mouth === "string" && VALID.mouth.has(o.mouth)))
+  )
+}
+
+export async function GET() {
+  const session = await auth()
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { robotId: true },
+  })
+
+  let robotConfig = null
+  if (user?.robotId) {
+    try { robotConfig = JSON.parse(user.robotId) } catch {}
+  }
+
+  return NextResponse.json({ robotConfig })
+}
 
 export async function PUT(req: NextRequest) {
   const session = await auth()
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  }
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const body = await req.json().catch(() => ({}))
-  const robotId = body?.robotId
 
-  if (typeof robotId !== "string" || !ROBOTS.some((r) => r.id === robotId)) {
-    return NextResponse.json({ error: "Invalid robot" }, { status: 400 })
+  if (!isValidConfig(body?.robotConfig)) {
+    return NextResponse.json({ error: "Invalid robot config" }, { status: 400 })
   }
 
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { robotId },
+    data: { robotId: JSON.stringify(body.robotConfig) },
   })
 
-  return NextResponse.json({ ok: true, robotId })
+  return NextResponse.json({ ok: true })
 }
 
-// Clears the current user's robot, returning the dashboard to its locked
-// "Choose Your Robot" state. Teacher-only — a demo/preview reset, so real
-// students can't wipe their own choice.
 export async function DELETE() {
   const session = await auth()
   if (!session || session.user.role !== "TEACHER") {
@@ -38,5 +70,5 @@ export async function DELETE() {
     data: { robotId: null },
   })
 
-  return NextResponse.json({ ok: true, robotId: null })
+  return NextResponse.json({ ok: true })
 }
