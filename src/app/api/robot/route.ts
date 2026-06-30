@@ -5,9 +5,9 @@ import { prisma } from "@/lib/prisma"
 const VALID = {
   face:    new Set(["round01","round02","square01","square02","square03","square04"]),
   eyes:    new Set(["bulging","dizzy","eva","frame1","frame2","glow","happy","hearts","robocop","round","roundFrame01","roundFrame02","sensor","shade01"]),
-  top:     new Set(["antenna","antennaCrooked","bulb01","glowingBulb01","glowingBulb02","horns","lights","pyramid","radar"]),
+  top:     new Set(["antenna","antennaCrooked","bulb01","glowingBulb01","glowingBulb02","horns","lights","pyramid","radar","none","ctop_star","ctop_crown","ctop_lightning","ctop_satellite","ctop_wifi","ctop_propeller","ctop_eyestalk","ctop_halo"]),
   sides:   new Set(["antenna01","antenna02","cables01","cables02","round","square","squareAssymetric"]),
-  texture: new Set(["camo01","camo02","circuits","dirty01","dirty02","dots","grunge01","grunge02"]),
+  texture: new Set(["camo01","camo02","circuits","dirty01","dirty02","dots","grunge01","grunge02","cs01","cs02","cs03","cs04","cs05","cs06","cs07","cs08","cs09","cs10","cs11","cs12","cs13","cs14","cs15","cs16","cs17","cs18","cs19","cs20"]),
   mouth:   new Set(["bite","diagram","grill01","grill02","grill03","smile01","smile02","square01","square02"]),
 }
 
