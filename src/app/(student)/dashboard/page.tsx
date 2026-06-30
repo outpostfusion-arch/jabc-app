@@ -133,7 +133,7 @@ export default async function DashboardPage() {
       >
         {/* Robot mascot — clickable demo-reset for teachers, decorative for students */}
         <div
-          className="absolute -right-2 -bottom-2 opacity-90 hidden sm:block"
+          className="absolute right-6 top-1/2 -translate-y-1/2 opacity-90 hidden sm:block"
           style={{ pointerEvents: isTeacher ? "auto" : "none" }}
         >
           <ResetMascot size={120} canReset={isTeacher} robotConfig={robotConfig} />
