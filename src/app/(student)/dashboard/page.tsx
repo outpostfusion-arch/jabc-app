@@ -113,6 +113,7 @@ export default async function DashboardPage() {
   //   stay locked (future progression).
   // Applies to teachers previewing too, so they see what students see.
   const hasRobot = !!user?.robotId
+  const robotConfig = user?.robotId ? (() => { try { return JSON.parse(user.robotId) } catch { return null } })() : null
   const levelRaw = isTeacher
     ? cookieStore.get("jabc-level-preview")?.value
     : user?.classGroup?.level ?? undefined
@@ -135,7 +136,7 @@ export default async function DashboardPage() {
           className="absolute -right-2 -bottom-2 opacity-90 hidden sm:block"
           style={{ pointerEvents: isTeacher ? "auto" : "none" }}
         >
-          <ResetMascot size={120} canReset={isTeacher} />
+          <ResetMascot size={120} canReset={isTeacher} robotConfig={robotConfig} />
         </div>
 
         <div className="flex items-center gap-3 mb-3 relative">

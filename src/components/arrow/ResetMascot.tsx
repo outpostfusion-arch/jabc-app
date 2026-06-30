@@ -3,18 +3,26 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import RobotMascot from "./RobotMascot"
+import UserRobot, { type RobotConfig } from "./UserRobot"
 
-/**
- * Wraps the robot mascot. When `canReset` is true (teacher/preview), clicking
- * the rabbit clears the chosen robot and returns the dashboard to its locked
- * starting state. For students it's just the decorative mascot.
- */
-export default function ResetMascot({ size = 120, canReset = false }: { size?: number; canReset?: boolean }) {
+export default function ResetMascot({
+  size = 120,
+  canReset = false,
+  robotConfig = null,
+}: {
+  size?: number
+  canReset?: boolean
+  robotConfig?: RobotConfig | null
+}) {
   const router = useRouter()
   const [resetting, setResetting] = useState(false)
 
+  const mascot = robotConfig
+    ? <UserRobot config={robotConfig} size={size} />
+    : <RobotMascot size={size} />
+
   if (!canReset) {
-    return <RobotMascot size={size} />
+    return mascot
   }
 
   async function handleReset() {
@@ -38,7 +46,7 @@ export default function ResetMascot({ size = 120, canReset = false }: { size?: n
       className="transition-transform hover:scale-105 active:scale-95"
       style={{ cursor: "pointer", pointerEvents: "auto", opacity: resetting ? 0.5 : 1, background: "none", border: "none", padding: 0 }}
     >
-      <RobotMascot size={size} />
+      {mascot}
     </button>
   )
 }
